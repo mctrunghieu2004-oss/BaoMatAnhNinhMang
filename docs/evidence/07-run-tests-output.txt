@@ -1,0 +1,63 @@
+==============================================================
+ BANG CHUNG 07 - Bo test case tu dong (25 test case)
+ Lenh: docker compose down -v && docker compose up -d --build
+        cd tests && node run-tests.mjs
+ Ngay chup: 2026-10-26 17:19:45
+==============================================================
+
+PASS TC01 sv01 bat MFA lan dau
+PASS TC13 token pre-MFA bi tu choi
+PASS TC02 dang nhap lan sau bang OTP
+PASS TC03 SV xem duoc 2 mon cua chinh minh
+PASS TC17 SV xem bang diem ca lop -> 403
+PASS TC04 GV nhap diem lop minh + step-up OTP
+PASS TC10 dung lai OTP vua dung -> tu choi
+PASS TC15 phien hop le nhung thieu OTP
+PASS TC16 GV sua diem lop khong phai cua minh
+PASS TC18 score = 15 -> 400 INPUT_REJECTED
+PASS TC14 cookie dung o thiet bi khac -> thu hoi phien
+PASS TC14b phien goc cung bi thu hoi sau canh bao
+PASS TC11 sua payload JWT
+PASS TC12 JWT alg=none
+PASS TC06 logout=200  / sau do=401 SESSION_REVOKED
+PASS TC05 chuoi hash 21 dong, khong vi pham
+PASS TC22 sua diem thang trong DB -> phat hien lech so voi log
+PASS TC24 sua audit id 3 -> dut chuoi hash
+PASS TC23 app_user bi tu choi 4 lenh pha hoai, van SELECT duoc
+PASS TC19 SQLi qua WAF -> 403
+PASS TC20 XSS trong body -> 403
+PASS TC21 goi thang app:3000 tu host -> connection refused
+PASS TC09 mat khau dung + 3 lan OTP sai -> khoa, canh bao HIGH
+PASS TC07 sai 5 lan -> khoa, lan 6 dung mat khau van 423
+PASS TC08 qua 10 lan login/15 phut -> 429
+┌─────────┬─────────┬────────┬────────────────────────────────────────────────────────┐
+│ (index) │ id      │ result │ note                                                   │
+├─────────┼─────────┼────────┼────────────────────────────────────────────────────────┤
+│ 0       │ 'TC01'  │ 'PASS' │ 'sv01 bat MFA lan dau'                                 │
+│ 1       │ 'TC13'  │ 'PASS' │ 'token pre-MFA bi tu choi'                             │
+│ 2       │ 'TC02'  │ 'PASS' │ 'dang nhap lan sau bang OTP'                           │
+│ 3       │ 'TC03'  │ 'PASS' │ 'SV xem duoc 2 mon cua chinh minh'                     │
+│ 4       │ 'TC17'  │ 'PASS' │ 'SV xem bang diem ca lop -> 403'                       │
+│ 5       │ 'TC04'  │ 'PASS' │ 'GV nhap diem lop minh + step-up OTP'                  │
+│ 6       │ 'TC10'  │ 'PASS' │ 'dung lai OTP vua dung -> tu choi'                     │
+│ 7       │ 'TC15'  │ 'PASS' │ 'phien hop le nhung thieu OTP'                         │
+│ 8       │ 'TC16'  │ 'PASS' │ 'GV sua diem lop khong phai cua minh'                  │
+│ 9       │ 'TC18'  │ 'PASS' │ 'score = 15 -> 400 INPUT_REJECTED'                     │
+│ 10      │ 'TC14'  │ 'PASS' │ 'cookie dung o thiet bi khac -> thu hoi phien'         │
+│ 11      │ 'TC14b' │ 'PASS' │ 'phien goc cung bi thu hoi sau canh bao'               │
+│ 12      │ 'TC11'  │ 'PASS' │ 'sua payload JWT'                                      │
+│ 13      │ 'TC12'  │ 'PASS' │ 'JWT alg=none'                                         │
+│ 14      │ 'TC06'  │ 'PASS' │ 'logout=200  / sau do=401 SESSION_REVOKED'             │
+│ 15      │ 'TC05'  │ 'PASS' │ 'chuoi hash 21 dong, khong vi pham'                    │
+│ 16      │ 'TC22'  │ 'PASS' │ 'sua diem thang trong DB -> phat hien lech so voi log' │
+│ 17      │ 'TC24'  │ 'PASS' │ 'sua audit id 3 -> dut chuoi hash'                     │
+│ 18      │ 'TC23'  │ 'PASS' │ 'app_user bi tu choi 4 lenh pha hoai, van SELECT duoc' │
+│ 19      │ 'TC19'  │ 'PASS' │ 'SQLi qua WAF -> 403'                                  │
+│ 20      │ 'TC20'  │ 'PASS' │ 'XSS trong body -> 403'                                │
+│ 21      │ 'TC21'  │ 'PASS' │ 'goi thang app:3000 tu host -> connection refused'     │
+│ 22      │ 'TC09'  │ 'PASS' │ 'mat khau dung + 3 lan OTP sai -> khoa, canh bao HIGH' │
+│ 23      │ 'TC07'  │ 'PASS' │ 'sai 5 lan -> khoa, lan 6 dung mat khau van 423'       │
+│ 24      │ 'TC08'  │ 'PASS' │ 'qua 10 lan login/15 phut -> 429'                      │
+└─────────┴─────────┴────────┴────────────────────────────────────────────────────────┘
+
+25/25 PASS

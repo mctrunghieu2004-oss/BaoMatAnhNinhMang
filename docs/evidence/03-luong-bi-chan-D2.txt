@@ -1,0 +1,44 @@
+==============================================================
+ BANG CHUNG 03 - Luong bi chan D2: Internet/host -> db:5432
+ Ngay chup: 2026-10-26 17:17:38
+==============================================================
+
+LUU Y QUAN TRONG VE MOI TRUONG DO:
+  May dung de do co cai san dich vu Windows 'postgresql-x64-17
+  - PostgreSQL Server 17', dich vu nay dang nghe 0.0.0.0:5432.
+  Vi vay phep thu 'Test-NetConnection localhost -Port 5432' tra ve
+  TcpTestSucceeded = True, NHUNG do KHONG phai database cua do an.
+  Phai kiem chung bang 3 buoc duoi day thay vi chi nhin cong mo.
+
+--- Buoc 1: container db co publish port nao ra host khong? ---
+$ docker compose port db 5432
+invalid IP:0
+-> "invalid IP:0" nghia la KHONG co anh xa port nao cho db:5432.
+   (doi chieu buoc duoi: cot Ports cua db chi la "5432/tcp", khong co "0.0.0.0:...->")
+
+$ docker compose ps --format "{{.Service}} {{.Ports}}"
+app 3000/tcp
+db 5432/tcp
+waf 0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+
+--- Buoc 2: ai dang nghe cong 5432 tren host? -----------------
+$ netstat -ano | findstr ":5432 .*LISTEN"
+  TCP    0.0.0.0:5432           0.0.0.0:0              LISTENING       8648
+  TCP    [::]:5432              [::]:0                 LISTENING       8648
+
+PID 8648 = tien trinh 'postgres' cua dich vu Windows
+postgresql-x64-17, khong phai container baomatanninhmang-db-1.
+
+--- Buoc 3: tu host co vao duoc DB 'securegrade' khong? -------
+$ node tests/check-d2.mjs
+app_user  -> securegrade => TU CHOI: [28P01] password authentication failed for user "app_user"
+postgres  -> securegrade => TU CHOI: [28P01] password authentication failed for user "postgres"
+
+KET LUAN D2: container db KHONG publish port (buoc 1), va server
+  dang nghe 5432 la mot PostgreSQL khac cua he dieu hanh (buoc 2),
+  khong chap nhan credential cua do an (buoc 3). Database cua do an
+  chi truy cap duoc qua luong F4 (docker compose exec).
+
+BAI HOC GHI VAO BAO CAO: 'cong dong' va 'dich vu cua minh khong
+  truy cap duoc tu ngoai' la hai chuyen khac nhau. Neu chi chay
+  Test-NetConnection roi ket luan thi se ket luan SAI o ca hai chieu.

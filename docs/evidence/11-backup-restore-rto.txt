@@ -1,0 +1,43 @@
+==============================================================
+ BANG CHUNG 11 - Dien tap phuc hoi: backup / restore, do RTO
+ Ngay chup: 2026-10-26 17:23:16
+==============================================================
+
+--- Buoc 1: trang thai truoc khi backup ----------------------
+So dong bang grades: 1
+So dong audit_log  : 54
+
+--- Buoc 2: tao backup ---------------------------------------
+$ sh scripts/backup.sh
+ baomatanninhmang-db-1 Copying baomatanninhmang-db-1:/tmp/sg.dump to backups/sg_20261026_172317.dump
+ baomatanninhmang-db-1 Copied baomatanninhmang-db-1:/tmp/sg.dump to backups/sg_20261026_172317.dump
+Backup: backups/sg_20261026_172317.dump
+
+--- Buoc 3: gia lap tham hoa (insider xoa het diem) ----------
+$ docker compose exec db psql -U postgres -d securegrade -c "DELETE FROM grades"
+DELETE 1
+So dong bang grades sau khi xoa: 0
+
+--- Buoc 4: restore, bam gio ---------------------------------
+$ sh scripts/restore.sh backups/sg_20261026_172317.dump
+ Container baomatanninhmang-app-1 Stopping 
+ Container baomatanninhmang-app-1 Stopped 
+ baomatanninhmang-db-1 Copying backups/sg_20261026_172317.dump to baomatanninhmang-db-1:/tmp/restore.dump
+ baomatanninhmang-db-1 Copied backups/sg_20261026_172317.dump to baomatanninhmang-db-1:/tmp/restore.dump
+ Container baomatanninhmang-db-1 Waiting 
+ Container baomatanninhmang-db-1 Healthy 
+ Container baomatanninhmang-app-1 Starting 
+ Container baomatanninhmang-app-1 Started 
+Restored from backups/sg_20261026_172317.dump
+
+--- Buoc 5: ket qua ------------------------------------------
+So dong bang grades sau restore: 1
+So dong audit_log sau restore  : 54
+He thong phuc vu lai duoc      : HTTP 200
+
+  RTO do duoc (tu luc bat dau restore den khi /health tra 200) = 5 giay
+  RPO thiet ke (backup hang ngay)                              = toi da 24 gio
+
+LUU Y: RTO nay la cua moi truong lab voi du lieu rat nho. No chung
+minh QUY TRINH restore chay duoc va da duoc dien tap, khong phai
+mot con so dung de cam ket SLA.

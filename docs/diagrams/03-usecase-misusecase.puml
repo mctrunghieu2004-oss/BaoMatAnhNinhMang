@@ -1,0 +1,61 @@
+@startuml
+' So do 3: Use case + misuse case
+title SecureGrade - Use case va Misuse case
+
+left to right direction
+
+actor "Sinh vien" as sv
+actor "Giang vien" as gv
+actor "Admin" as ad
+actor "Ke tan cong" as atk #red
+actor "Insider\n(quyen tren host/DB)" as ins #red
+
+rectangle "SecureGrade" {
+  usecase "Dang nhap (mat khau)" as UC1
+  usecase "Bat / xac minh MFA TOTP" as UC2
+  usecase "Xem diem cua minh" as UC3
+  usecase "Xem bang diem lop minh day" as UC4
+  usecase "Sua diem (step-up OTP)" as UC5
+  usecase "Xem canh bao, audit log" as UC6
+  usecase "Kiem tra toan ven" as UC7
+  usecase "Thu hoi phien / reset MFA / mo khoa" as UC8
+}
+
+rectangle "Misuse case" {
+  usecase "KB1 Phishing lay mat khau GV" as MU1 #FFD6D6
+  usecase "KB2 Danh cap cookie phien" as MU2 #FFD6D6
+  usecase "KB3 Gia mao JWT de nang quyen" as MU3 #FFD6D6
+  usecase "KB4 IDOR doi enrollmentId" as MU4 #FFD6D6
+  usecase "KB5 SQLi / XSS qua o nhap" as MU5 #FFD6D6
+  usecase "KB6 Sua diem, xoa log trong DB" as MU6 #FFD6D6
+}
+
+sv --> UC1
+sv --> UC2
+sv --> UC3
+gv --> UC1
+gv --> UC2
+gv --> UC4
+gv --> UC5
+ad --> UC6
+ad --> UC7
+ad --> UC8
+
+atk --> MU1
+atk --> MU2
+atk --> MU3
+atk --> MU4
+atk --> MU5
+ins --> MU6
+
+MU1 ..> UC1 : threatens
+MU2 ..> UC5 : threatens
+MU3 ..> UC6 : threatens
+MU4 ..> UC5 : threatens
+MU5 ..> UC5 : threatens
+MU6 ..> UC7 : threatens
+
+UC2 ..> MU1 : <<mitigates>>
+UC5 ..> MU2 : <<mitigates>>
+UC7 ..> MU6 : <<mitigates>>
+@enduml

@@ -1,0 +1,25 @@
+==============================================================
+ BANG CHUNG 06 - Least privilege cua app_user (TC23)
+ Ngay chup: 2026-10-26 17:19:03
+==============================================================
+
+Y NGHIA: ke ca khi app bi SQL injection thanh cong, user DB ma app
+dung van khong xoa duoc dau vet va khong sua duoc audit log.
+
+Ma tran quyen thiet ke (db/init/02_roles.sh):
+  users, sessions, grades : SELECT, INSERT, UPDATE  (khong DELETE)
+  courses, enrollments    : SELECT
+  audit_log               : SELECT, INSERT          (append-only)
+  Khong co quyen DDL.
+
+$ node tests/check-least-privilege.mjs
+
+PASS  DELETE FROM audit_log                                          -> TU CHOI    ERROR:  permission denied for table audit_log
+PASS  UPDATE audit_log SET action = 'x'                              -> TU CHOI    ERROR:  permission denied for table audit_log
+PASS  DELETE FROM grades                                             -> TU CHOI    ERROR:  permission denied for table grades
+PASS  DROP TABLE grades                                              -> TU CHOI    ERROR:  must be owner of table grades
+PASS  INSERT INTO courses (code, name, lecturer_id) VALUES ('X','X',1) -> TU CHOI    ERROR:  permission denied for table courses
+PASS  SELECT count(*) FROM users                                     -> CHAY DUOC  6
+PASS  SELECT count(*) FROM audit_log                                 -> CHAY DUOC  0
+
+7/7 dung ky vong

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SecureGrade - Quan tri</title>
+<link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<main>
+  <nav><span id="who"></span><button id="logout" class="secondary">Dang xuat</button></nav>
+  <h1>Bang dieu khien quan tri</h1>
+  <nav>
+    <button id="tab-alerts" class="secondary">Canh bao</button>
+    <button id="tab-audit" class="secondary">Audit log</button>
+    <button id="tab-integrity" class="secondary">Kiem tra toan ven</button>
+    <button id="tab-users" class="secondary">Nguoi dung</button>
+  </nav>
+  <label for="otp">Ma OTP cho thao tac quan tri (step-up)</label>
+  <input id="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+  <div id="msg"></div>
+  <div id="out"></div>
+</main>
+<script type="module" src="/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+==============================================================
+ BANG CHUNG 08 - Defense-in-Depth: bo qua WAF van an toan
+ Ngay chup: 2026-10-26 17:21:12
+==============================================================
+
+Kich ban: gia su ke tan cong da vuot qua WAF hoan toan (vi du
+tim duoc duong vong, hoac WAF bi tat nham). Script duoi day chay
+BEN TRONG container app va goi thang localhost:3000.
+
+$ docker compose cp tests/attacks/sqli-direct.mjs app:/tmp/sqli-direct.mjs
+$ docker compose exec app node /tmp/sqli-direct.mjs
+
+401 {"error":"INVALID_CREDENTIALS"} <= ' OR '1'='1' --
+401 {"error":"INVALID_CREDENTIALS"} <= admin'--
+401 {"error":"INVALID_CREDENTIALS"} <= x'; DROP TABLE grades; --
+
+KY VONG: 401 INVALID_CREDENTIALS cho ca 3 payload.
+         KHONG co thong bao loi SQL, khong lo cau truc DB.
+
+--- Bang grades sau khi bi thu DROP TABLE --------------------
+$ docker compose exec db psql -U postgres -d securegrade -c "\dt"
+            List of relations
+ Schema |    Name     | Type  |  Owner   
+--------+-------------+-------+----------
+ public | audit_log   | table | postgres
+ public | courses     | table | postgres
+ public | enrollments | table | postgres
+ public | grades      | table | postgres
+ public | sessions    | table | postgres
+ public | users       | table | postgres
+(6 rows)
+
+
+Du 3 lop chan: (1) parameterized query $1,$2 nen payload chi la
+du lieu, (2) validation, (3) app_user khong co quyen DDL/DELETE.

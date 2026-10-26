@@ -1,0 +1,48 @@
+==============================================================
+ BANG CHUNG 04 - WAF ModSecurity + OWASP CRS chan tan cong
+ Ngay chup: 2026-10-26 17:18:05
+==============================================================
+
+--- 1. SQL injection tren query string (KY VONG: 403) --------
+$ curl -i -G http://localhost:8080/api/grades/me --data-urlencode "q=1' UNION SELECT password_hash FROM users--"
+HTTP 403
+
+--- 2. XSS trong body JSON (KY VONG: 403) --------------------
+$ curl -i -X PUT http://localhost:8080/api/grades/1 -d {"score":8,"reason":"<script>alert(document.cookie)</script>"}
+HTTP 403
+
+--- 3. Path traversal (KY VONG: bi chan) ---------------------
+$ curl -i --path-as-is "http://localhost:8080/../../etc/passwd"
+HTTP 400
+   LUU Y: 400 nay do chinh nginx tra ve (URI khong hop le),
+   KHONG phai do ModSecurity. Phai doc log moi biet lop nao chan.
+
+--- 4. User-Agent cua cong cu quet (KY VONG: 403) ------------
+$ curl -i -A "sqlmap/1.8" http://localhost:8080/health
+HTTP 403
+
+--- 5. Request hop le de doi chieu (KY VONG: 200) ------------
+$ curl -i http://localhost:8080/health
+HTTP 200
+
+--- 6. Rule CRS da khop (trich tu log WAF) -------------------
+$ docker compose logs waf | grep -oE ... (ruleId + message)
+
+Detects SQL code execution and information gathering attempts	 -> rule 942190
+Detects concatenated basic SQL injection and SQLLFI attempts	 -> rule 942360
+Found User-Agent associated with security scanner	 -> rule 913100
+Inbound Anomaly Score Exceeded (Total Score: 20)	 -> rule 949110
+Inbound Anomaly Score Exceeded (Total Score: 25)	 -> rule 949110
+Inbound Anomaly Score Exceeded (Total Score: 5)	 -> rule 949110
+Javascript method detected	 -> rule 941390
+Looking for basic sql injection. Common attack string for mysql, oracle and others	 -> rule 942270
+NoScript XSS InjectionChecker: HTML Injection	 -> rule 941160
+Node-Validator Deny List Keywords	 -> rule 941180
+SQL Injection Attack Detected via libinjection	 -> rule 942100
+XSS Attack Detected via libinjection	 -> rule 941100
+XSS Filter - Category 1: Script Tag Vector	 -> rule 941110
+
+Phien ban: OWASP_CRS/4.30.0, libmodsecurity3 version 3.0.17
+
+Mo hinh diem bat thuong cua CRS v4: moi rule khop cong diem;
+tong >= 5 thi rule 949110 chan request.

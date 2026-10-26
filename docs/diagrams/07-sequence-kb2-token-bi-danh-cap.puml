@@ -1,0 +1,45 @@
+@startuml
+' So do 7: KB2 - cookie bi danh cap bi phat hien va thu hoi
+title KB2 - Infostealer lay cookie phien cua giang vien
+
+actor "Giang vien" as gv
+actor "Ke tan cong" as atk
+participant "app" as a
+database "sessions" as s
+database "audit_log" as log
+actor "Admin" as ad
+
+gv -> a : dang nhap + OTP
+a -> s : session S1 (mfa_verified = true)\nfingerprint = SHA256("Chrome/Win" + IP_gv)
+a --> gv : cookie sg_token (HttpOnly, SameSite=Strict, 15 phut)
+
+note over gv, atk
+  Malware tren may GV doc cookie store
+  va gui cookie ra ngoai (ClickFix / infostealer).
+  Cookie HttpOnly chan JS doc, nhung khong chan
+  malware doc file profile cua trinh duyet.
+end note
+
+atk -> a : GET /api/me\nCookie sg_token (hop le)\nUser-Agent "curl/8.0", IP khac
+a -> a : chu ky JWT dung, session S1 con hieu luc
+a -> a : fingerprint(req) != S1.fingerprint
+a -> s : UPDATE S1 SET revoked_at = now(),\nrevoke_reason = 'CONTEXT_MISMATCH'
+a -> log : SESSION_CONTEXT_MISMATCH (CRITICAL)
+a --> atk : 401 SESSION_CONTEXT_MISMATCH
+
+gv -> a : thao tac tiep theo bang cookie cu
+a --> gv : 401 SESSION_REVOKED -> UI tu chuyen ve login
+
+note over a
+  Ngay khi fingerprint khop (ke tan cong gia dung
+  User-Agent), viec sua diem van can X-OTP tu
+  dien thoai GV -> 401 STEP_UP_REQUIRED.
+end note
+
+ad -> a : GET /api/admin/alerts
+a --> ad : SESSION_CONTEXT_MISMATCH (CRITICAL)
+ad -> a : POST /api/admin/users/:id/revoke-sessions (+ X-OTP)
+ad -> a : POST /api/admin/users/:id/reset-mfa (+ X-OTP)
+a -> log : ADMIN_REVOKE_SESSIONS, ADMIN_RESET_MFA (HIGH)
+ad -> a : loc GRADE_UPDATE cua GV trong 24 gio\nxac nhan tung thay doi
+@enduml

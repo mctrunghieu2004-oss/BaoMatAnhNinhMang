@@ -1,0 +1,54 @@
+services:
+  waf:
+    image: owasp/modsecurity-crs:nginx
+    environment:
+      BACKEND: http://app:3000
+      PORT: "8080"
+      MODSEC_RULE_ENGINE: "On"
+      BLOCKING_PARANOIA: "1"
+      ALLOWED_METHODS: "GET HEAD POST OPTIONS PUT"
+      MODSEC_AUDIT_LOG: /dev/stdout
+    ports:
+      - "8080:8080"
+    networks: [net_public, net_app]
+    depends_on: [app]
+
+  app:
+    build: ./app
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_URL: postgres://app_user:${APP_DB_PASSWORD}@db:5432/securegrade
+      JWT_SECRET: ${JWT_SECRET}
+      TOTP_ISSUER: SecureGrade
+    networks: [net_app, net_data]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: securegrade
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres -d securegrade"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [net_data]
+
+networks:
+  net_public: {}
+  net_app:
+    internal: true
+  net_data:
+    internal: true
+
+volumes:
+  db_data:

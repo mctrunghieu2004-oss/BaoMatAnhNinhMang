@@ -1,0 +1,68 @@
+@startuml
+' So do 6: Activity - pipeline 12 lop kiem chung mot request sua diem
+title Pipeline 12 lop kiem chung (request sua diem)
+
+start
+:1. WAF OWASP CRS v4\nloc SQLi / XSS / path traversal / scanner UA;
+if (CRS chan?) then (co)
+  :403 tu nginx;
+  stop
+endif
+:2. Rate limit\n10 login / 300 API moi 15 phut / IP;
+if (vuot nguong?) then (co)
+  :audit RATE_LIMITED (WARN);
+  :429 TOO_MANY_REQUESTS;
+  stop
+endif
+:3. JWT: chu ky HS256 co dinh, iss, aud, exp;
+if (khong hop le?) then (co)
+  :audit JWT_INVALID (HIGH);
+  :401 INVALID_TOKEN;
+  stop
+endif
+:4. Session trong DB: ton tai, dung sub,\nchua revoke, chua het han;
+if (sid la?) then (co)
+  :audit SESSION_UNKNOWN (CRITICAL)\n-> nghi lo JWT_SECRET;
+  :401 INVALID_SESSION;
+  stop
+endif
+:5. Fingerprint SHA-256(User-Agent + IP);
+if (khac ngu canh?) then (co)
+  :revoke session + audit\nSESSION_CONTEXT_MISMATCH (CRITICAL);
+  :401;
+  stop
+endif
+:6. MFA da xac minh trong phien;
+if (mfa_verified = false?) then (co)
+  :401 MFA_REQUIRED;
+  stop
+endif
+:7. RBAC: role doc tu bang users;
+if (khong du vai tro?) then (co)
+  :audit ACCESS_DENIED_ROLE (HIGH);
+  :403 FORBIDDEN;
+  stop
+endif
+:8. Step-up OTP: ma moi, chua tung dung (90s);
+if (thieu / sai / replay?) then (co)
+  :audit STEP_UP_FAIL_* (HIGH);
+  :401 STEP_UP_REQUIRED;
+  stop
+endif
+:9. Validation: kieu, mien 0-10, do dai reason;
+if (khong hop le?) then (co)
+  :audit INPUT_REJECTED (WARN);
+  :400 INVALID_INPUT;
+  stop
+endif
+:10. Ownership: GV phai day lop chua enrollmentId;
+if (khong phai chu so huu?) then (co)
+  :audit ACCESS_DENIED_IDOR (HIGH);
+  :403 / 404;
+  stop
+endif
+:11. Parameterized query + quyen DB toi thieu\n(app_user khong DELETE, khong DDL);
+:12. Audit hash-chain trong cung transaction;
+:200 OK;
+stop
+@enduml

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SecureGrade - Dang nhap</title>
+<link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<main>
+  <h1>SecureGrade - Dang nhap</h1>
+  <form id="form">
+    <label for="username">Tai khoan</label>
+    <input id="username" name="username" autocomplete="username" maxlength="50" required>
+    <label for="password">Mat khau</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" maxlength="128" required>
+    <p><button type="submit">Dang nhap</button></p>
+  </form>
+  <div id="msg"></div>
+</main>
+<script type="module" src="/js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SecureGrade - Xac thuc hai lop</title>
+<link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<main>
+  <h1 id="title">Xac thuc hai lop</h1>
+  <div id="enroll">
+    <p>Quet ma QR bang Google Authenticator hoac Microsoft Authenticator, roi nhap ma 6 so.</p>
+    <img id="qr" alt="Ma QR TOTP">
+  </div>
+  <form id="form">
+    <label for="otp">Ma OTP</label>
+    <input id="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
+    <p><button type="submit">Xac nhan</button></p>
+  </form>
+  <div id="msg"></div>
+</main>
+<script type="module" src="/js/mfa.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+==============================================================
+ BANG CHUNG 05 - Security headers (helmet) va gioi han request
+ Ngay chup: 2026-10-26 17:18:22
+==============================================================
+
+$ curl -s -D - -o /dev/null http://localhost:8080/health
+
+HTTP/1.1 200 OK
+Date: Mon, 26 Oct 2026 10:18:22 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 15
+Connection: keep-alive
+Content-Security-Policy: default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Origin-Agent-Cluster: ?1
+Referrer-Policy: no-referrer
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+X-DNS-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: SAMEORIGIN
+X-Permitted-Cross-Domain-Policies: none
+X-XSS-Protection: 0
+ETag: W/"f-VaSQ4oDUiZblZNAEkkN+sX+q3Sg"
+Server: nginx
+Access-Control-Allow-Headers: *
+
+
+KIEM TRA:
+  [co ] Content-Security-Policy      -> chan inline script, script ngoai
+  [co ] X-Content-Type-Options       -> nosniff
+  [co ] X-Frame-Options / frame-ancestors -> chong clickjacking
+  [co ] Referrer-Policy: no-referrer
+  [   ] X-Powered-By -> KHONG CO (dung: da an cong nghe backend)
+
+--- Chi nhan Content-Type JSON cho request thay doi du lieu ---
+
+a) Qua WAF: CRS chan truoc khi request toi app
+$ curl -X POST http://localhost:8080/api/auth/login -H "Content-Type: text/plain" -d "x"
+   HTTP 403  <- ModSecurity chan (lop 1)
+
+b) Goi thang app, bo qua WAF: app tu tu choi
+$ docker compose exec app node -e "fetch(... Content-Type: text/plain ...)"
+   HTTP 415 {"error":"JSON_ONLY"}  <- app tu choi (lop 2)
+
+Hai lop doc lap cung chan mot loai request: day la vi du nho
+cua Defense-in-Depth. Cung voi cookie SameSite=Strict, viec chi
+nhan application/json la lop chong CSRF: form HTML cua site khac
+khong gui duoc Content-Type nay ma khong kich hoat CORS preflight.

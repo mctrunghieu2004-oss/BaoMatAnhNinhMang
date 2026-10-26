@@ -1,0 +1,75 @@
+@startuml
+' So do 8: ERD
+hide circle
+title SecureGrade - ERD
+
+entity users {
+  *id : serial
+  --
+  username : varchar(50) unique
+  full_name : varchar(100)
+  role : STUDENT | LECTURER | ADMIN
+  password_hash : text (bcrypt cost 12)
+  mfa_secret : text (base32 TOTP)
+  mfa_enabled : boolean
+  last_otp, last_otp_at : chong replay OTP
+  failed_attempts, mfa_failed : int
+  locked_until : timestamptz
+  is_active : boolean
+}
+entity courses {
+  *id : serial
+  --
+  code : varchar(20) unique
+  name : varchar(100)
+  lecturer_id : FK users(id)
+}
+entity enrollments {
+  *id : serial
+  --
+  course_id : FK courses(id)
+  student_id : FK users(id)
+  unique (course_id, student_id)
+}
+entity grades {
+  *enrollment_id : PK, FK enrollments(id)
+  --
+  score : numeric(4,2) check 0..10
+  updated_by : FK users(id)
+  updated_at : timestamptz
+}
+entity sessions {
+  *id : uuid
+  --
+  user_id : FK users(id)
+  fingerprint : char(64) SHA-256(UA + IP)
+  mfa_verified : boolean
+  expires_at : timestamptz
+  revoked_at, revoke_reason
+}
+entity audit_log {
+  *id : bigserial
+  --
+  ts : timestamptz (app tu dien de dua vao hash)
+  actor_id : int
+  action : varchar(40)
+  target : varchar(100)
+  detail : TEXT (JSON nguyen van, khong dung JSONB)
+  ip : varchar(64)
+  severity : INFO | WARN | HIGH | CRITICAL
+  prev_hash : char(64)
+  hash : char(64)
+}
+
+users ||--o{ courses : "day"
+users ||--o{ enrollments : "hoc"
+courses ||--o{ enrollments
+enrollments ||--o| grades
+users ||--o{ sessions
+users ||--o{ audit_log : "actor"
+
+note bottom of audit_log
+  Append-only: app_user chi co SELECT + INSERT.
+  hash = SHA256(prev_hash|ts|actor_id|action|target|detail|ip|severity)
+end note
+@enduml

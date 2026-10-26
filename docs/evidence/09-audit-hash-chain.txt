@@ -1,0 +1,52 @@
+==============================================================
+ BANG CHUNG 09 - Audit log hash-chain (append-only)
+ Ngay chup: 2026-10-26 17:21:29
+==============================================================
+
+Moi dong luu prev_hash = hash cua dong truoc. Sua/xoa bat ky dong
+nao deu lam dut chuoi va chi ra DUNG VI TRI bi can thiep.
+hash = SHA256(prev_hash|ts|actor_id|action|target|detail|ip|severity)
+
+--- 12 dong dau cua chuoi (prev_hash noi tiep hash) ----------
+ id |        action        | severity | prev_hash_12 |   hash_12    
+----+----------------------+----------+--------------+--------------
+  1 | LOGIN_PASSWORD_OK    | INFO     | 000000000000 | 42da66df5819
+  2 | MFA_ENROLLED         | INFO     | 42da66df5819 | c9becaf88255
+  3 | LOGIN_PASSWORD_OK    | INFO     | c9becaf88255 | fbae94f0adce
+  4 | LOGIN_PASSWORD_OK    | INFO     | fbae94f0adce | 4700d905c4ee
+  5 | LOGIN_SUCCESS        | INFO     | 4700d905c4ee | f439248e2f66
+  6 | ACCESS_DENIED_ROLE   | HIGH     | f439248e2f66 | f04f8e64ab80
+  7 | LOGIN_PASSWORD_OK    | INFO     | f04f8e64ab80 | 15baef6bda5d
+  8 | MFA_ENROLLED         | INFO     | 15baef6bda5d | a065c9b93e93
+  9 | GRADE_UPDATE         | INFO     | a065c9b93e93 | 104c26a41176
+ 10 | STEP_UP_FAIL_REPLAY  | HIGH     | 104c26a41176 | 2e0bb7854457
+ 11 | STEP_UP_FAIL_INVALID | HIGH     | 2e0bb7854457 | bae95f46d892
+ 12 | ACCESS_DENIED_IDOR   | HIGH     | bae95f46d892 | 8cb5533544a5
+(12 rows)
+
+Dong id=1 co prev_hash = 000... (GENESIS).
+Doc theo cot: hash_12 cua dong n = prev_hash_12 cua dong n+1.
+
+--- Mot dong GRADE_UPDATE day du (co old/new de doi chieu) ---
+-[ RECORD 1 ]-------------------------------------------------
+id       | 9
+ts       | 2026-10-26 10:19:50.993+00
+actor_id | 2
+action   | GRADE_UPDATE
+target   | enrollment:1
+detail   | {"old":null,"new":8.5,"reason":"Nhap diem cuoi ky"}
+severity | INFO
+
+
+--- Thong ke su kien theo severity ---------------------------
+ severity | so_dong |                                                             cac_action                                                             
+----------+---------+------------------------------------------------------------------------------------------------------------------------------------
+ CRITICAL |       3 | INTEGRITY_VIOLATION, SESSION_CONTEXT_MISMATCH
+ HIGH     |       9 | ACCESS_DENIED_IDOR, ACCESS_DENIED_ROLE, ACCOUNT_LOCKED, JWT_INVALID, MFA_FAIL_THRESHOLD, STEP_UP_FAIL_INVALID, STEP_UP_FAIL_REPLAY
+ WARN     |      22 | INPUT_REJECTED, LOGIN_FAIL, LOGIN_FAIL_UNKNOWN_USER, LOGIN_WHILE_LOCKED, MFA_FAIL_INVALID, RATE_LIMITED
+ INFO     |      14 | GRADE_UPDATE, LOGIN_PASSWORD_OK, LOGIN_SUCCESS, LOGOUT, MFA_ENROLLED
+(4 rows)
+
+
+Ket qua kiem tra chuoi (TC05, TC22, TC24) nam trong file
+07-run-tests-output.txt.

@@ -1,0 +1,45 @@
+@startuml
+' So do 1: Kien truc phan vung + Allowed Flows
+title SecureGrade - Kien truc phan vung va Allowed Flows
+
+skinparam rectangle {
+  BackgroundColor<<zone>> #F7F8FA
+  BorderColor #888888
+}
+
+actor "Nguoi dung\n(SV / GV / Admin)" as user
+actor "Ke tan cong" as atk
+actor "Nguoi van hanh\n(tren host)" as ops
+
+rectangle "Zone Edge / DMZ\nnet_public + net_app" <<zone>> {
+  component "waf\nModSecurity v3 + OWASP CRS v4\nnginx, publish 8080" as waf
+}
+
+rectangle "Zone App\nnet_app (internal) + net_data (internal)" <<zone>> {
+  component "app\nNode.js 22 + Express 5\nkhong publish port\nkhong co egress Internet" as app
+}
+
+rectangle "Zone Data\nnet_data (internal)" <<zone>> {
+  database "db\nPostgreSQL 16\nkhong publish port\nuser app_user least privilege" as db
+}
+
+cloud "Internet" as net
+
+user --> net
+atk --> net
+net --> waf : "F1  HTTP/8080\n(HTTPS o production)"
+waf --> app : "F2  HTTP noi bo :3000"
+app --> db  : "F3  PostgreSQL :5432\napp_user"
+ops --> db  : "F4  docker compose exec\nbackup / restore / dieu tra"
+
+net  -[#red,dashed]-> app : "D1 BLOCKED\napp khong co ports"
+net  -[#red,dashed]-> db  : "D2 BLOCKED\ndb khong co ports"
+waf  -[#red,dashed]-> db  : "D3 BLOCKED\nwaf khong thuoc net_data"
+app  -[#red,dashed]-> net : "D4 BLOCKED\nnet_app/net_data internal"
+
+note bottom of db
+  D5: db chi thuoc net_data nen
+  khong goi duoc bat ky dich vu nao
+  ngoai zone Data
+end note
+@enduml

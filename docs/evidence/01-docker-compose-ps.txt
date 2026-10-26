@@ -1,0 +1,13 @@
+==============================================================
+ BANG CHUNG 01 - Phan vung mang: container va port
+ Lenh: docker compose ps
+ Ngay chup: 2026-10-26 17:15:03
+==============================================================
+
+NAME                     IMAGE                         COMMAND                  SERVICE   CREATED          STATUS                             PORTS
+baomatanninhmang-app-1   baomatanninhmang-app          "docker-entrypoint.s…"   app       31 seconds ago   Up 25 seconds                      3000/tcp
+baomatanninhmang-db-1    postgres:16-alpine            "docker-entrypoint.s…"   db        31 seconds ago   Up 30 seconds (healthy)            5432/tcp
+baomatanninhmang-waf-1   owasp/modsecurity-crs:nginx   "/docker-entrypoint.…"   waf       31 seconds ago   Up 24 seconds (health: starting)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+
+KY VONG: chi service 'waf' co cot PORTS = 0.0.0.0:8080->8080.
+         'app' va 'db' khong publish port nao ra host.
