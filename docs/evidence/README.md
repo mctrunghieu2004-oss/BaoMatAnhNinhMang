@@ -34,14 +34,70 @@ sh scripts/backup.sh && sh scripts/restore.sh backups/<file>.dump   # 11
 Trước mỗi phép đo cần nhiều lần đăng nhập, chạy `docker compose restart app` để reset bộ
 đếm rate limit (nằm trong RAM) — nếu không, request hợp lệ sẽ trả 429 thay vì đi tới WAF.
 
-## Còn thiếu: ảnh chụp màn hình
+## Ảnh chụp màn hình giao diện
 
-Các file ở đây là output terminal. Nếu bài nộp cần ảnh chụp màn hình giao diện, cần chụp
-thêm bằng tay (chưa có trong thư mục này):
+Thư mục [`screenshots/`](screenshots) — chụp ở 1280×800, ngày 26/10/2026.
 
-- [ ] Trang `login.html` và `mfa.html` lúc hiện mã QR
-- [ ] Trang `lecturer.html` lúc mở dialog sửa điểm có ô OTP
-- [ ] Trang `admin.html` tab **Cảnh báo** lúc có dòng `SESSION_CONTEXT_MISMATCH` (CRITICAL)
-- [ ] Trang `admin.html` tab **Kiểm tra toàn vẹn** lúc phát hiện vi phạm
-      (chạy `UPDATE grades SET score = 10 WHERE enrollment_id = 1` bằng `postgres` rồi mở tab này)
-- [ ] DevTools Console trên các trang: không có lỗi vi phạm CSP
+| Ảnh | Nội dung | Dùng cho |
+| --- | --- | --- |
+| `01-dang-nhap.png` | Form đăng nhập | Slide 8, demo 1:00 |
+| `02-mfa-enroll-ma-qr.png` | Mã QR lúc bật MFA lần đầu | 5.3, TC01, demo 1:00 |
+| `03-giang-vien-bang-diem-lop.png` | GV chọn lớp, xem bảng điểm lớp mình dạy | 5.11, TC04 |
+| `04-dialog-sua-diem-co-step-up-otp.png` | Dialog sửa điểm có ô **OTP step-up** | 5.5, trade-off T2, demo 2:30 |
+| `05-luu-diem-thanh-cong.png` | Lưu điểm thành công, bảng cập nhật ngay | TC04 |
+| `06-admin-tab-canh-bao-critical.png` | Tab Cảnh báo: `SESSION_CONTEXT_MISMATCH`, `INTEGRITY_VIOLATION` (CRITICAL), `MFA_FAIL_THRESHOLD`, `JWT_INVALID` (HIGH) | 5.8, KB1–KB3, demo 4:00 |
+| `07-admin-phat-hien-vi-pham-toan-ven.png` | Tab Kiểm tra toàn vẹn **lúc phát hiện vi phạm**: `enrollment 3: DB=10 / log=8.75` | 5.7, KB6, TC22, demo 7:15 |
+| `08-admin-tab-audit-log.png` | Tab Audit log với cột hash | 5.6 |
+| `09-admin-tab-nguoi-dung-phan-ung-su-co.png` | Tab Người dùng + 3 nút phản ứng sự cố | 5.12, chương 12 Runbook |
+| `10-sinh-vien-xem-diem.png` | SV chỉ thấy điểm của chính mình | TC03 |
+
+**CSP:** suốt phiên chụp, DevTools Console không có lỗi vi phạm CSP nào. Chỉ có một dòng
+404 cho `/favicon.ico` — không ảnh hưởng chức năng, và đó cũng là bằng chứng gián tiếp rằng
+CSP `script-src 'self'` không chặn nhầm file JS nào của trang.
+
+### Cách chụp lại bằng tay
+
+Nếu cần chụp lại (ví dụ sau khi sửa giao diện), làm theo thứ tự sau. Trên Windows dùng
+**Win + Shift + S** để chụp vùng màn hình, ảnh vào clipboard rồi dán vào Paint và lưu.
+
+1. **Chuẩn bị**: `docker compose up -d` rồi mở http://localhost:8080.
+   Nếu đã thử đăng nhập nhiều lần trước đó, chạy `docker compose restart app` để reset
+   rate limit (10 lần đăng nhập / 15 phút).
+
+2. **Ảnh 02 (mã QR)** — cần một tài khoản *chưa* bật MFA. Reset một tài khoản:
+
+   ```bash
+   docker compose exec db psql -U postgres -d securegrade -c "UPDATE users SET mfa_enabled = FALSE, mfa_secret = NULL, last_otp = NULL, locked_until = NULL WHERE username = 'sv03'"
+   ```
+
+   Đăng nhập `sv03` / `Sv03@2026demo` → trang MFA hiện QR → chụp.
+
+3. **Ảnh 03–05 (giảng viên)** — đăng nhập `gv01` / `Gv01@2026demo`, nhập OTP từ điện thoại,
+   chọn lớp SEC401, bấm **Sửa** ở một sinh viên, điền điểm + lý do + OTP mới, chụp trước
+   khi bấm Lưu, rồi chụp sau khi Lưu.
+
+4. **Ảnh 07 (phát hiện vi phạm toàn vẹn)** — giả lập insider sửa điểm thẳng trong DB:
+
+   ```bash
+   docker compose exec db psql -U postgres -d securegrade -c "UPDATE grades SET score = 10 WHERE enrollment_id = 3"
+   ```
+
+   Đăng nhập `admin` / `Admin@2026demo`, bấm tab **Kiểm tra toàn vẹn** → bảng hiện dòng
+   `enrollment 3: DB=10 / log=8.75` → chụp. Sau đó trả lại hiện trạng:
+
+   ```bash
+   docker compose exec db psql -U postgres -d securegrade -c "UPDATE grades SET score = 8.75 WHERE enrollment_id = 3"
+   ```
+
+5. **Ảnh 06, 08, 09 (admin)** — vẫn trong phiên admin, bấm lần lượt các tab Cảnh báo,
+   Audit log, Người dùng và chụp. Tab Cảnh báo chỉ có dòng CRITICAL nếu trước đó đã chạy
+   `node tests/run-tests.mjs` (bộ test sinh ra các sự kiện này).
+
+6. **Ảnh 10 (sinh viên)** — đăng nhập `sv01` / `Sv01@2026demo` + OTP.
+
+**Lấy mã OTP khi không có điện thoại**: người vận hành đọc được secret từ DB (luồng F4):
+
+```bash
+docker compose exec db psql -U postgres -d securegrade -tAc "SELECT mfa_secret FROM users WHERE username='gv01'"
+cd tests && node -e "import('otplib').then(async m => console.log(await m.generate({ secret: 'DAN_SECRET_VAO_DAY' })))"
+```

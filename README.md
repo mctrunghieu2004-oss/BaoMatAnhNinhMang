@@ -172,7 +172,8 @@ docs/                     BAO_CAO.md · SLIDE.md · diagrams/ · evidence/
 
 ## 7. Việc còn lại
 
-Code, test, báo cáo và slide đã xong. Bốn việc còn lại, làm được trong **một buổi**:
+Code, test, báo cáo, slide, sơ đồ và bằng chứng đã xong. Còn **hai việc**, cả hai đều cần
+có mặt bạn:
 
 1. ~~Render 8 sơ đồ ra PNG~~ — **đã xong**, xem `docs/diagrams/*.png`. Chỉ còn việc chèn
    vào báo cáo và slide. Render lại sau khi sửa `.puml`:
@@ -183,11 +184,8 @@ Code, test, báo cáo và slide đã xong. Bốn việc còn lại, làm đượ
 
    Sơ đồ 06 (pipeline) rất cao và hẹp (409×3031) — để nguyên làm hình cả trang trong phụ
    lục báo cáo, đừng đưa lên slide; slide 6 đã có sẵn bản rút gọn dạng chữ.
-2. ~~Chụp bằng chứng~~ — **11 file output đã có** trong `docs/evidence/`, chạy lại từ DB
-   sạch (xem [`docs/evidence/README.md`](docs/evidence/README.md) để biết file nào dùng cho
-   mục nào). Còn thiếu **ảnh chụp màn hình giao diện** (~15 phút): trang MFA lúc hiện QR,
-   dialog sửa điểm có ô OTP, tab "Cảnh báo" có dòng CRITICAL, tab "Kiểm tra toàn vẹn" lúc
-   phát hiện vi phạm. Danh sách đầy đủ ở cuối `docs/evidence/README.md`.
+2. ~~Chụp bằng chứng~~ — **đã xong**: 11 file output terminal + 10 ảnh chụp màn hình giao
+   diện trong [`docs/evidence/`](docs/evidence/README.md), kèm hướng dẫn chụp lại bằng tay.
 3. **Chuyển báo cáo + slide sang định dạng nộp** (~60 phút) — dán `docs/BAO_CAO.md` vào
    Word/Google Docs, thêm trang bìa, mục lục, chèn ảnh sơ đồ và ảnh bằng chứng, xuất PDF.
    `docs/SLIDE.md` dán sang PowerPoint theo từng slide.
