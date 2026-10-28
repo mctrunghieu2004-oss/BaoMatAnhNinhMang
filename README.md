@@ -9,8 +9,8 @@ thống**, Hướng 1 (thiết kế hệ thống an toàn).
 
 | Tài liệu | File |
 | --- | --- |
-| Báo cáo đồ án (8 chương) | [`docs/BAO_CAO.md`](docs/BAO_CAO.md) |
-| Slide 12 trang + kịch bản demo 9'30 | [`docs/SLIDE.md`](docs/SLIDE.md) |
+| Báo cáo đồ án (8 chương) | [`docs/BAO_CAO.md`](docs/BAO_CAO.md) — bản Word: `docs/BAO_CAO.docx` |
+| Slide + kịch bản demo 9'30 | [`docs/SLIDE.md`](docs/SLIDE.md) — bản PowerPoint: `docs/SLIDE.pptx` |
 | 8 sơ đồ (PlantUML) | [`docs/diagrams/`](docs/diagrams) |
 | Bằng chứng kiểm thử (11 file) | [`docs/evidence/`](docs/evidence/README.md) |
 | Đề bài | [`docs/DE_BAI.md`](docs/DE_BAI.md) |
@@ -191,6 +191,23 @@ Kịch bản demo đang chia vai TV1–TV4; nếu nhóm ít hơn 4 người thì
 bảng màu chung ở `_style.puml`. Vẽ xong xuất PNG đúng tên file tương ứng
 (ví dụ `01-kien-truc-phan-vung.png`) vào cùng thư mục — báo cáo đã trỏ sẵn tới các tên này
 nên không phải sửa gì thêm.
+
+### Xuất lại file nộp
+
+Sau khi sửa báo cáo/slide, hoặc sau khi vẽ xong sơ đồ và để PNG vào `docs/diagrams/`:
+
+```bash
+pip install pypandoc-binary
+python scripts/export-docs.py
+```
+
+Script sinh lại `docs/BAO_CAO.docx` (khổ A4, lề 2,5cm — lề trái 3cm để đóng gáy) và
+`docs/SLIDE.pptx`. Không cần cài pandoc riêng. Mở bằng Word rồi **File → Export →
+Create PDF** để ra bản PDF nộp.
+
+Ghi chú về bản `.pptx`: ghi chú người nói nằm trong **ô Notes** của từng slide
+(View → Notes Page), không hiện trên màn chiếu. Kịch bản demo không được đưa vào
+slide vì đó là kịch bản tổng duyệt — xem ở cuối `docs/SLIDE.md`.
 
 ### Checklist nộp bài
 
