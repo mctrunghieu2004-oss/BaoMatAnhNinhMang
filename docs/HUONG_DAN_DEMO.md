@@ -8,9 +8,12 @@ Dữ liệu demo hiện có:
 | Lớp | Giảng viên | enrollment | Sinh viên | Điểm |
 | --- | --- | --- | --- | --- |
 | SEC401 | `gv01` | 1 | `sv01` | 8.50 |
-| SEC401 | `gv01` | 3 | `sv02` | 8.75 |
+| SEC401 | `gv01` | 3 | `sv02` | chưa có |
 | SEC401 | `gv01` | 5 | `sv03` | chưa có |
 | NET301 | `gv02` | 2, 4, 6 | `sv01`, `sv02`, `sv03` | chưa có |
+
+MFA đã bật cho `admin`, `gv01`, `gv02`, `sv01`, `sv02`. Riêng **`sv03` chưa bật** — dùng
+tài khoản này nếu muốn cho thầy xem màn hình **mã QR** lúc đăng ký MFA lần đầu.
 
 Mật khẩu: `admin` → `Admin@2026demo`, `gv01` → `Gv01@2026demo`, tương tự cho các tài
 khoản còn lại (viết hoa chữ đầu + `@2026demo`).
@@ -55,10 +58,21 @@ vậy, đừng nói đây là "cửa hậu".
 Thử sai một lần là phải lấy mã mới, đừng dán lại mã cũ. Vừa dùng mã để đăng nhập thì phải chờ
 sang chu kỳ 30 giây sau mới sửa được điểm. Script có in số giây còn lại.
 
-### A3. Bật MFA cho `gv02` — bắt buộc, nếu không kịch bản KB1 không chạy được
+### A3. Kiểm tra dữ liệu cảnh báo
 
-Hiện `gv02` chưa bật MFA. Đăng nhập `gv02` / `Gv02@2026demo` → trang hiện mã QR →
-chạy `node scripts/otp.mjs gv02` → nhập mã in ra → MFA bật xong. Đăng xuất.
+Tab **Cảnh báo** của trang admin chỉ có dòng CRITICAL nếu trước đó đã chạy bộ test:
+
+```bash
+cd tests && node run-tests.mjs && cd ..
+```
+
+**Đừng ngắt giữa chừng.** Bộ test có `docker compose restart app` xen giữa các nhóm nên
+có đoạn đứng im 5–10 giây — bình thường. Chạy trọn bộ mất khoảng 2 phút và sinh ra
+đủ `SESSION_CONTEXT_MISMATCH`, `INTEGRITY_VIOLATION`, `MFA_FAIL_THRESHOLD`.
+
+Bộ test **cố ý khoá tài khoản** ở TC07 và TC09. Chạy xong nhớ mở khoá — vào trang
+admin, tab **Người dùng**, bấm **Mở khoá**. Đây cũng chính là tính năng phản ứng sự cố
+sẽ demo ở phần cuối, nên cứ coi đây là một lần tập.
 
 ### A4. Mở sẵn
 

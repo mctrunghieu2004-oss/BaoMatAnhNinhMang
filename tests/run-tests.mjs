@@ -97,6 +97,15 @@ const enrollmentOf = (course, student) => Number(psql(
     WHERE c.code = '${course}' AND u.username = '${student}'`));
 
 // ---------------------------------------------------------------- TC01-TC03
+// Don trang thai truoc khi chay, de bo test chay lai duoc tren DB da co du lieu
+// thay vi bat buoc phai "docker compose down -v" truoc moi lan.
+// TC07/TC09 co chu dich khoa tai khoan, nen lan chay sau se gap ACCOUNT_LOCKED.
+// last_otp cung phai xoa: lan chay truoc vua dung mot ma, lan nay gap lai
+// ma cua cung chu ky 30 giay se bi tu choi OTP_REPLAY.
+psql(`UPDATE users SET locked_until = NULL, failed_attempts = 0, mfa_failed = 0,
+      last_otp = NULL, last_otp_at = NULL`);
+// Rieng sv01: TC01 kiem tra lan dau bat MFA nen phai o trang thai chua enroll.
+psql(`UPDATE users SET mfa_enabled = FALSE, mfa_secret = NULL WHERE username = 'sv01'`);
 const sv01 = await loginFull('sv01');
 check('TC01', sv01.enrolled && auditHas('MFA_ENROLLED'), 'sv01 bat MFA lan dau');
 
@@ -216,9 +225,17 @@ const xss = await fetch(`${BASE}/api/grades/1`, {
 check('TC20', xss.status === 403, `XSS trong body -> ${xss.status}`);
 
 // ---------------------------------------------------------------- TC21 (segmentation)
-let appRefused = false;
-try { await fetch('http://localhost:3000/health'); } catch { appRefused = true; }
-check('TC21', appRefused, 'goi thang app:3000 tu host -> connection refused');
+// Khong thu ket noi toi localhost:3000 nua. Mot tien trinh khac tren may co the
+// dang chiem cong do (da gap: dev server Vite cua du an khac) -> ket noi thanh
+// cong ma khong phai app cua minh, test bao FAIL oan. Cung loai bay voi
+// PostgreSQL 17 cai san o muc 4.3.1 cua bao cao. Hoi thang Docker moi la bang
+// chung dung: khong co anh xa port thi khong co duong vao tu host.
+// Cot PORTS cua waf co dang "0.0.0.0:8080->8080/tcp"; cua app chi la "3000/tcp".
+// Dau "->" chinh la anh xa ra host, khong co no thi khong vao duoc tu ngoai.
+const ports = (svc) => execSync(`docker compose ps --format "{{.Ports}}" ${svc}`,
+  { cwd: ROOT, stdio: 'pipe' }).toString().trim();
+check('TC21', !ports('app').includes('->') && !ports('db').includes('->') && ports('waf').includes('->'),
+  'chi waf anh xa port ra host, app va db thi khong');
 
 // ---------------------------------------------------------------- TC09 (KB1): khoa gv02
 await restartApp();

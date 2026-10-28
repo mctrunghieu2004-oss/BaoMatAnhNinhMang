@@ -1,8 +1,10 @@
 ==============================================================
  BANG CHUNG 07 - Bo test case tu dong (25 test case)
- Lenh: docker compose down -v && docker compose up -d --build
-        cd tests && node run-tests.mjs
- Ngay chup: 2026-10-26 17:19:45
+ Lenh: cd tests && node run-tests.mjs
+ Ngay chup: 2026-10-28 22:40:33
+ Ghi chu: bo test tu don trang thai o dau moi lan chay (mo khoa,
+          xoa last_otp, reset MFA cua sv01) nen chay lai duoc nhieu
+          lan ma khong can docker compose down -v.
 ==============================================================
 
 PASS TC01 sv01 bat MFA lan dau
@@ -20,13 +22,13 @@ PASS TC14b phien goc cung bi thu hoi sau canh bao
 PASS TC11 sua payload JWT
 PASS TC12 JWT alg=none
 PASS TC06 logout=200  / sau do=401 SESSION_REVOKED
-PASS TC05 chuoi hash 21 dong, khong vi pham
+PASS TC05 chuoi hash 268 dong, khong vi pham
 PASS TC22 sua diem thang trong DB -> phat hien lech so voi log
 PASS TC24 sua audit id 3 -> dut chuoi hash
 PASS TC23 app_user bi tu choi 4 lenh pha hoai, van SELECT duoc
 PASS TC19 SQLi qua WAF -> 403
 PASS TC20 XSS trong body -> 403
-PASS TC21 goi thang app:3000 tu host -> connection refused
+PASS TC21 chi waf anh xa port ra host, app va db thi khong
 PASS TC09 mat khau dung + 3 lan OTP sai -> khoa, canh bao HIGH
 PASS TC07 sai 5 lan -> khoa, lan 6 dung mat khau van 423
 PASS TC08 qua 10 lan login/15 phut -> 429
@@ -48,13 +50,13 @@ PASS TC08 qua 10 lan login/15 phut -> 429
 │ 12      │ 'TC11'  │ 'PASS' │ 'sua payload JWT'                                      │
 │ 13      │ 'TC12'  │ 'PASS' │ 'JWT alg=none'                                         │
 │ 14      │ 'TC06'  │ 'PASS' │ 'logout=200  / sau do=401 SESSION_REVOKED'             │
-│ 15      │ 'TC05'  │ 'PASS' │ 'chuoi hash 21 dong, khong vi pham'                    │
+│ 15      │ 'TC05'  │ 'PASS' │ 'chuoi hash 268 dong, khong vi pham'                   │
 │ 16      │ 'TC22'  │ 'PASS' │ 'sua diem thang trong DB -> phat hien lech so voi log' │
 │ 17      │ 'TC24'  │ 'PASS' │ 'sua audit id 3 -> dut chuoi hash'                     │
 │ 18      │ 'TC23'  │ 'PASS' │ 'app_user bi tu choi 4 lenh pha hoai, van SELECT duoc' │
 │ 19      │ 'TC19'  │ 'PASS' │ 'SQLi qua WAF -> 403'                                  │
 │ 20      │ 'TC20'  │ 'PASS' │ 'XSS trong body -> 403'                                │
-│ 21      │ 'TC21'  │ 'PASS' │ 'goi thang app:3000 tu host -> connection refused'     │
+│ 21      │ 'TC21'  │ 'PASS' │ 'chi waf anh xa port ra host, app va db thi khong'     │
 │ 22      │ 'TC09'  │ 'PASS' │ 'mat khau dung + 3 lan OTP sai -> khoa, canh bao HIGH' │
 │ 23      │ 'TC07'  │ 'PASS' │ 'sai 5 lan -> khoa, lan 6 dung mat khau van 423'       │
 │ 24      │ 'TC08'  │ 'PASS' │ 'qua 10 lan login/15 phut -> 429'                      │

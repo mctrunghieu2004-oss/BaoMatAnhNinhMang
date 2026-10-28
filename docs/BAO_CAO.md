@@ -311,6 +311,25 @@ này, hoặc tệ hơn, báo an toàn giả khi cổng đóng mà dịch vụ v�
 khác. Kiểm chứng một kiểm soát an ninh phải đi tới tận hành vi cần chặn, không dừng ở một
 dấu hiệu gián tiếp.
 
+Chính cái bẫy này lặp lại một lần nữa ở test case TC21, lần này đúng vào lúc tổng duyệt
+demo. TC21 kiểm chứng D1 bằng cách gọi `fetch('http://localhost:3000/health')` và chờ
+**connection refused**. Lần chạy cuối cùng nó báo **FAIL**: lời gọi trả về `200 OK`. Truy
+ra thì tiến trình đang nghe cổng 3000 là một dev server Vite của một dự án khác trên cùng
+máy, hoàn toàn không liên quan đến container `app`.
+
+Phép kiểm chứng đã được sửa lại cho hỏi đúng câu hỏi — không hỏi "có ai trả lời ở cổng
+3000 không", mà hỏi Docker "`app` có ánh xạ port ra host không":
+
+```js
+const ports = (svc) => execSync(`docker compose ps --format "{{.Ports}}" ${svc}`).toString().trim();
+check('TC21', !ports('app').includes('->') && !ports('db').includes('->') && ports('waf').includes('->'),
+  'chi waf anh xa port ra host, app va db thi khong');
+```
+
+Cột `Ports` của `waf` có dạng `0.0.0.0:8080->8080/tcp`, của `app` chỉ là `3000/tcp`. Dấu
+`->` chính là ánh xạ ra host. Phép kiểm chứng mới miễn nhiễm với mọi tiến trình khác trên
+máy, và khẳng định đúng điều cần khẳng định.
+
 ### 4.4 Tech stack
 
 | Thành phần | Công nghệ | Lý do chọn |
@@ -686,7 +705,7 @@ Chạy tự động bằng `node tests/run-tests.mjs` trên DB sạch. Output đ
 | TC18 | Tấn công | `score = 15` | 400, `INPUT_REJECTED` | Validation + CHECK | **PASS** |
 | TC19 | Tấn công (KB5) | SQLi trên query string | 403 từ WAF (rule 942100) | OWASP CRS | **PASS** |
 | TC20 | Tấn công (KB5) | XSS `<script>` trong body JSON | 403 từ WAF (941100/941110) | OWASP CRS | **PASS** |
-| TC21 | Tấn công | Gọi thẳng `app:3000` từ host | Connection refused | Segmentation | **PASS** |
+| TC21 | Tấn công | Kiểm tra ánh xạ port của Docker cho cả 3 service | Chỉ `waf` có `->` ra host; `app` và `db` không có (xem 4.3.1) | Segmentation | **PASS** |
 | TC22 | Tấn công (KB6) | `postgres`: `UPDATE grades SET score = 10` | `/integrity` báo `dbScore=10 / loggedScore=8.5`, `INTEGRITY_VIOLATION` | Đối chiếu log | **PASS** |
 | TC23 | Tấn công (KB6) | `app_user`: 4 lệnh phá hoại | `permission denied` cả 4; `SELECT` vẫn chạy | Least privilege | **PASS** |
 | TC24 | Tấn công (KB6) | `postgres`: `UPDATE audit_log ... WHERE id = 3` | `broken` chứa đúng id 3 | Hash-chain | **PASS** |
