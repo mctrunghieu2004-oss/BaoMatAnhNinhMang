@@ -1,68 +1,101 @@
 @startuml
-' So do 6: Activity - pipeline 12 lop kiem chung mot request sua diem
-title Pipeline 12 lop kiem chung (request sua diem)
+' Sơ đồ 6: Activity — pipeline 12 lớp kiểm chứng một request sửa điểm
+' Sơ đồ này rất cao (12 nhánh nối tiếp). Khi vẽ lại trong draw.io nên chia
+' làm 3 cột, mỗi cột 4 lớp, nối cột này sang cột kia bằng connector tròn A, B:
+'   Cột 1: lớp 1-4 (biên ngoài)      -> (A)
+'   Cột 2: lớp 5-8 (danh tính)       -> (B)
+'   Cột 3: lớp 9-12 (nghiệp vụ + ghi)
+' Mỗi nhánh "có" đi sang phải rồi kết thúc; nhánh "không" đi thẳng xuống.
+!include _style.puml
+title Sơ đồ 6 — Pipeline 12 lớp kiểm chứng cho một request sửa điểm
+
+skinparam activity {
+  BackgroundColor #DCE6F1
+  BorderColor #2E5C8A
+  DiamondBackgroundColor #F4F6F8
+  DiamondBorderColor #2E5C8A
+}
 
 start
-:1. WAF OWASP CRS v4\nloc SQLi / XSS / path traversal / scanner UA;
-if (CRS chan?) then (co)
-  :403 tu nginx;
-  stop
-endif
-:2. Rate limit\n10 login / 300 API moi 15 phut / IP;
-if (vuot nguong?) then (co)
-  :audit RATE_LIMITED (WARN);
-  :429 TOO_MANY_REQUESTS;
-  stop
-endif
-:3. JWT: chu ky HS256 co dinh, iss, aud, exp;
-if (khong hop le?) then (co)
-  :audit JWT_INVALID (HIGH);
-  :401 INVALID_TOKEN;
-  stop
-endif
-:4. Session trong DB: ton tai, dung sub,\nchua revoke, chua het han;
-if (sid la?) then (co)
-  :audit SESSION_UNKNOWN (CRITICAL)\n-> nghi lo JWT_SECRET;
-  :401 INVALID_SESSION;
-  stop
-endif
-:5. Fingerprint SHA-256(User-Agent + IP);
-if (khac ngu canh?) then (co)
-  :revoke session + audit\nSESSION_CONTEXT_MISMATCH (CRITICAL);
-  :401;
-  stop
-endif
-:6. MFA da xac minh trong phien;
-if (mfa_verified = false?) then (co)
-  :401 MFA_REQUIRED;
-  stop
-endif
-:7. RBAC: role doc tu bang users;
-if (khong du vai tro?) then (co)
-  :audit ACCESS_DENIED_ROLE (HIGH);
-  :403 FORBIDDEN;
-  stop
-endif
-:8. Step-up OTP: ma moi, chua tung dung (90s);
-if (thieu / sai / replay?) then (co)
-  :audit STEP_UP_FAIL_* (HIGH);
-  :401 STEP_UP_REQUIRED;
-  stop
-endif
-:9. Validation: kieu, mien 0-10, do dai reason;
-if (khong hop le?) then (co)
-  :audit INPUT_REJECTED (WARN);
-  :400 INVALID_INPUT;
-  stop
-endif
-:10. Ownership: GV phai day lop chua enrollmentId;
-if (khong phai chu so huu?) then (co)
-  :audit ACCESS_DENIED_IDOR (HIGH);
-  :403 / 404;
-  stop
-endif
-:11. Parameterized query + quyen DB toi thieu\n(app_user khong DELETE, khong DDL);
-:12. Audit hash-chain trong cung transaction;
-:200 OK;
+
+partition "Biên ngoài" {
+  :**1. WAF** — OWASP CRS v4, Paranoia Level 1\nlọc SQLi / XSS / path traversal / scanner UA;
+  if (anomaly score ≥ 5?) then (có)
+    #FADBD8:403 từ nginx;
+    stop
+  endif
+
+  :**2. Rate limit** — 10 login / 300 API mỗi 15 phút / IP;
+  if (vượt ngưỡng?) then (có)
+    #FADBD8:audit RATE_LIMITED (WARN)\n→ 429 TOO_MANY_REQUESTS;
+    stop
+  endif
+}
+
+partition "Danh tính và phiên" {
+  :**3. JWT** — chữ ký HS256 cố định, iss, aud, exp;
+  if (không hợp lệ?) then (có)
+    #FADBD8:audit JWT_INVALID (HIGH)\n→ 401 INVALID_TOKEN;
+    stop
+  endif
+
+  :**4. Session trong DB** — tồn tại, đúng sub,\nchưa revoke, chưa hết hạn;
+  if (sid lạ?) then (có)
+    #FADBD8:audit SESSION_UNKNOWN (CRITICAL)\nnghi lộ JWT_SECRET → 401 INVALID_SESSION;
+    stop
+  endif
+
+  :**5. Fingerprint** — SHA-256(User-Agent + IP);
+  if (khác ngữ cảnh lúc đăng nhập?) then (có)
+    #FADBD8:revoke session + audit\nSESSION_CONTEXT_MISMATCH (CRITICAL) → 401;
+    stop
+  endif
+
+  :**6. MFA** — đã xác minh OTP trong phiên này;
+  if (mfa_verified = false?) then (có)
+    #FADBD8:401 MFA_REQUIRED;
+    stop
+  endif
+}
+
+partition "Quyền và nghiệp vụ" {
+  :**7. RBAC** — role đọc từ bảng users, không từ claim;
+  if (không đủ vai trò?) then (có)
+    #FADBD8:audit ACCESS_DENIED_ROLE (HIGH)\n→ 403 FORBIDDEN;
+    stop
+  endif
+
+  :**8. Step-up OTP** — mã mới, chưa từng dùng trong 90s;
+  if (thiếu / sai / replay?) then (có)
+    #FADBD8:audit STEP_UP_FAIL_* (HIGH)\n→ 401 STEP_UP_REQUIRED;
+    stop
+  endif
+
+  :**9. Validation** — kiểu dữ liệu, miền 0..10,\nđộ dài reason 5..200;
+  if (không hợp lệ?) then (có)
+    #FADBD8:audit INPUT_REJECTED (WARN)\n→ 400 INVALID_INPUT;
+    stop
+  endif
+
+  :**10. Ownership** — GV phải dạy lớp chứa enrollmentId;
+  if (không phải chủ sở hữu?) then (có)
+    #FADBD8:audit ACCESS_DENIED_IDOR (HIGH)\n→ 403 / 404;
+    stop
+  endif
+}
+
+partition "Ghi dữ liệu" {
+  :**11. Parameterized query** + quyền DB tối thiểu\n(app_user không DELETE, không DDL);
+  :**12. Audit hash-chain** ghi trong cùng transaction\nvới bản ghi điểm;
+  #D5F5E3:200 OK;
+}
+
 stop
+
+note right
+  12 lớp **độc lập**: lớp trước bị vượt qua
+  thì lớp sau vẫn giữ. Lớp 1 là lớp duy nhất
+  có thể bỏ qua từ bên ngoài, và chương 6.4
+  đã chứng minh bỏ qua nó vẫn không khai thác được.
+end note
 @enduml

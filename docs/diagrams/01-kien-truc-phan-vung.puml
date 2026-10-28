@@ -1,45 +1,57 @@
 @startuml
-' So do 1: Kien truc phan vung + Allowed Flows
-title SecureGrade - Kien truc phan vung va Allowed Flows
+' Sơ đồ 1: Kiến trúc phân vùng + Allowed Flows
+' Bố cục khi vẽ lại: 3 khối xếp dọc từ trên xuống (Edge -> App -> Data),
+' Internet nằm trên cùng, người vận hành nằm bên phải khối Data.
+!include _style.puml
+title Sơ đồ 1 — Kiến trúc phân vùng và Allowed Flows
 
 skinparam rectangle {
-  BackgroundColor<<zone>> #F7F8FA
-  BorderColor #888888
+  BackgroundColor<<zone>> #F4F6F8
+  BorderColor<<zone>> #2E5C8A
+}
+skinparam component {
+  BackgroundColor #DCE6F1
+  BorderColor #2E5C8A
+}
+skinparam database {
+  BackgroundColor #DCE6F1
+  BorderColor #2E5C8A
 }
 
-actor "Nguoi dung\n(SV / GV / Admin)" as user
-actor "Ke tan cong" as atk
-actor "Nguoi van hanh\n(tren host)" as ops
-
-rectangle "Zone Edge / DMZ\nnet_public + net_app" <<zone>> {
-  component "waf\nModSecurity v3 + OWASP CRS v4\nnginx, publish 8080" as waf
-}
-
-rectangle "Zone App\nnet_app (internal) + net_data (internal)" <<zone>> {
-  component "app\nNode.js 22 + Express 5\nkhong publish port\nkhong co egress Internet" as app
-}
-
-rectangle "Zone Data\nnet_data (internal)" <<zone>> {
-  database "db\nPostgreSQL 16\nkhong publish port\nuser app_user least privilege" as db
-}
+actor "Người dùng\n(SV / GV / Admin)" as user
+actor "Kẻ tấn công" as atk #C0392B
+actor "Người vận hành\n(trên host)" as ops
 
 cloud "Internet" as net
 
+rectangle "Zone Edge / DMZ\nnet_public + net_app" <<zone>> {
+  component "waf\nModSecurity v3 + OWASP CRS v4.30\nnginx — publish cổng 8080\nParanoia Level 1, anomaly score ≥ 5 → chặn" as waf
+}
+
+rectangle "Zone App\nnet_app (internal) + net_data (internal)" <<zone>> {
+  component "app\nNode.js 22 + Express 5\nkhông publish cổng\nkhông có egress Internet" as app
+}
+
+rectangle "Zone Data\nnet_data (internal)" <<zone>> {
+  database "db\nPostgreSQL 16\nkhông publish cổng\nrole app_user — least privilege" as db
+}
+
 user --> net
 atk --> net
-net --> waf : "F1  HTTP/8080\n(HTTPS o production)"
-waf --> app : "F2  HTTP noi bo :3000"
-app --> db  : "F3  PostgreSQL :5432\napp_user"
-ops --> db  : "F4  docker compose exec\nbackup / restore / dieu tra"
+net --> waf : "F1 — HTTP/8080\n(HTTPS ở production)"
+waf --> app : "F2 — HTTP nội bộ :3000"
+app --> db  : "F3 — PostgreSQL :5432\nbằng app_user"
+ops --> db  : "F4 — docker compose exec\nbackup / restore / điều tra"
 
-net  -[#red,dashed]-> app : "D1 BLOCKED\napp khong co ports"
-net  -[#red,dashed]-> db  : "D2 BLOCKED\ndb khong co ports"
-waf  -[#red,dashed]-> db  : "D3 BLOCKED\nwaf khong thuoc net_data"
-app  -[#red,dashed]-> net : "D4 BLOCKED\nnet_app/net_data internal"
+net -[#C0392B,dashed]-> app : "D1 — CHẶN\napp không khai báo ports"
+net -[#C0392B,dashed]-> db  : "D2 — CHẶN\ndb không khai báo ports"
+waf -[#C0392B,dashed]-> db  : "D3 — CHẶN\nwaf không thuộc net_data"
+app -[#C0392B,dashed]-> net : "D4 — CHẶN\nnet_app/net_data đều internal"
 
 note bottom of db
-  D5: db chi thuoc net_data nen
-  khong goi duoc bat ky dich vu nao
-  ngoai zone Data
+  **D5** — db chỉ thuộc net_data nên không gọi được
+  bất kỳ dịch vụ nào ngoài Zone Data.
+  Hệ quả của D4: có RCE trong app cũng không
+  gửi được dữ liệu ra Internet.
 end note
 @enduml

@@ -1,39 +1,50 @@
 @startuml
-' So do 7: KB2 - cookie bi danh cap bi phat hien va thu hoi
-title KB2 - Infostealer lay cookie phien cua giang vien
+' Sơ đồ 7: KB2 — cookie bị đánh cắp, bị phát hiện và thu hồi
+' Bố cục khi vẽ lại: 6 lifeline. Đặt "Kẻ tấn công" tách hẳn sang phải
+' để thấy rõ đây là ngữ cảnh khác với giảng viên.
+!include _style.puml
+title Sơ đồ 7 — KB2: Infostealer lấy cookie phiên của giảng viên
 
-actor "Giang vien" as gv
-actor "Ke tan cong" as atk
+skinparam sequence {
+  ParticipantBackgroundColor #DCE6F1
+  ParticipantBorderColor #2E5C8A
+  ActorBackgroundColor #DCE6F1
+  ActorBorderColor #2E5C8A
+  LifeLineBorderColor #7F8C8D
+}
+
+actor "Giảng viên" as gv
 participant "app" as a
 database "sessions" as s
 database "audit_log" as log
+actor "Kẻ tấn công" as atk #C0392B
 actor "Admin" as ad
 
-gv -> a : dang nhap + OTP
-a -> s : session S1 (mfa_verified = true)\nfingerprint = SHA256("Chrome/Win" + IP_gv)
-a --> gv : cookie sg_token (HttpOnly, SameSite=Strict, 15 phut)
+gv -> a : đăng nhập + OTP
+a -> s : tạo session S1 (mfa_verified = true)\nfingerprint = SHA-256("Chrome/Windows" + IP_gv)
+a --> gv : cookie sg_token\n(HttpOnly, SameSite=Strict, TTL 15 phút)
 
-note over gv, atk
-  Malware tren may GV doc cookie store
-  va gui cookie ra ngoai (ClickFix / infostealer).
-  Cookie HttpOnly chan JS doc, nhung khong chan
-  malware doc file profile cua trinh duyet.
+note over gv, atk #FADBD8
+  Malware trên máy GV đọc cookie store của trình duyệt
+  và gửi cookie ra ngoài (ClickFix / infostealer).
+  HttpOnly chặn JavaScript đọc cookie, nhưng **không chặn**
+  malware đọc file profile của trình duyệt.
 end note
 
-atk -> a : GET /api/me\nCookie sg_token (hop le)\nUser-Agent "curl/8.0", IP khac
-a -> a : chu ky JWT dung, session S1 con hieu luc
-a -> a : fingerprint(req) != S1.fingerprint
+atk -> a : GET /api/me\nCookie sg_token (hợp lệ)\nUser-Agent "curl/8.0", IP khác
+a -> a : chữ ký JWT đúng, session S1 còn hiệu lực
+a -> a : fingerprint(request) ≠ S1.fingerprint
 a -> s : UPDATE S1 SET revoked_at = now(),\nrevoke_reason = 'CONTEXT_MISMATCH'
 a -> log : SESSION_CONTEXT_MISMATCH (CRITICAL)
 a --> atk : 401 SESSION_CONTEXT_MISMATCH
 
-gv -> a : thao tac tiep theo bang cookie cu
-a --> gv : 401 SESSION_REVOKED -> UI tu chuyen ve login
+gv -> a : thao tác tiếp theo bằng cookie cũ
+a --> gv : 401 SESSION_REVOKED\n→ giao diện tự chuyển về trang đăng nhập
 
 note over a
-  Ngay khi fingerprint khop (ke tan cong gia dung
-  User-Agent), viec sua diem van can X-OTP tu
-  dien thoai GV -> 401 STEP_UP_REQUIRED.
+  Ngay cả khi kẻ tấn công **giả đúng** User-Agent và IP
+  để fingerprint khớp, việc sửa điểm vẫn cần X-OTP
+  sinh từ điện thoại của GV → 401 STEP_UP_REQUIRED.
 end note
 
 ad -> a : GET /api/admin/alerts
@@ -41,5 +52,5 @@ a --> ad : SESSION_CONTEXT_MISMATCH (CRITICAL)
 ad -> a : POST /api/admin/users/:id/revoke-sessions (+ X-OTP)
 ad -> a : POST /api/admin/users/:id/reset-mfa (+ X-OTP)
 a -> log : ADMIN_REVOKE_SESSIONS, ADMIN_RESET_MFA (HIGH)
-ad -> a : loc GRADE_UPDATE cua GV trong 24 gio\nxac nhan tung thay doi
+ad -> a : lọc GRADE_UPDATE của GV trong 24 giờ,\nxác nhận lại từng thay đổi
 @enduml

@@ -186,11 +186,11 @@ chèn sẵn vào `docs/BAO_CAO.md`. Còn **ba việc**, cả ba đều cần có
 
 Kịch bản demo đang chia vai TV1–TV4; nếu nhóm ít hơn 4 người thì gộp vai lại.
 
-Render lại sơ đồ sau khi sửa `.puml`:
-
-```bash
-docker run --rm -v "//d/BaoMatAnNinhMang/docs/diagrams:/data" plantuml/plantuml -tpng -o /data "/data/*.puml"
-```
+**Sơ đồ**: `docs/diagrams/*.puml` là **bản đặc tả** để vẽ bằng draw.io, không phải ảnh
+đã render. Mỗi file ghi đủ thành phần, nhãn, quan hệ và có ghi chú bố cục ở đầu file;
+bảng màu chung ở `_style.puml`. Vẽ xong xuất PNG đúng tên file tương ứng
+(ví dụ `01-kien-truc-phan-vung.png`) vào cùng thư mục — báo cáo đã trỏ sẵn tới các tên này
+nên không phải sửa gì thêm.
 
 ### Checklist nộp bài
 

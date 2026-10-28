@@ -872,20 +872,24 @@ Xem [`docs/evidence/07-run-tests-output.txt`](evidence/07-run-tests-output.txt).
 
 ### D. Danh sách sơ đồ
 
-Mỗi sơ đồ có hai file trong `docs/diagrams/`: nguồn `.puml` và ảnh `.png` đã render
-(PlantUML 1.2025.x). Render lại bằng:
-`docker run --rm -v "//d/BaoMatAnNinhMang/docs/diagrams:/data" plantuml/plantuml -tpng -o /data "/data/*.puml"`
+Tám sơ đồ được **nhóm vẽ bằng draw.io**. Mỗi sơ đồ có một file đặc tả `.puml`
+trong `docs/diagrams/` ghi đầy đủ thành phần, nhãn và quan hệ — dùng làm bản thiết kế
+để vẽ, đồng thời là bản ghi dạng văn bản của sơ đồ để dễ soát và sửa về sau.
+Bảng màu quy ước dùng chung cho cả tám sơ đồ nằm ở `docs/diagrams/_style.puml`.
 
-| # | Sơ đồ | File | Kích thước PNG |
-| --- | --- | --- | --- |
-| 1 | Kiến trúc phân vùng + Allowed Flows | `01-kien-truc-phan-vung` | 1065×856 |
-| 2 | DFD mức 1 có trust boundary | `02-dfd-muc-1` | 1130×1090 |
-| 3 | Use case + misuse case | `03-usecase-misusecase` | 910×950 |
-| 4 | Sequence đăng nhập + MFA | `04-sequence-dang-nhap-mfa` | 1217×1421 |
-| 5 | Sequence sửa điểm có step-up + audit | `05-sequence-sua-diem` | 1912×1267 |
-| 6 | Activity: pipeline 12 lớp kiểm chứng | `06-activity-pipeline` | 409×3031 (hình cả trang) |
-| 7 | Sequence KB2: token bị đánh cắp | `07-sequence-kb2-token-bi-danh-cap` | 1013×970 |
-| 8 | ERD | `08-erd` | 1094×899 |
+| # | Sơ đồ | Loại | File đặc tả | Mục dùng |
+| --- | --- | --- | --- | --- |
+| 1 | Kiến trúc phân vùng + Allowed Flows | Deployment | `01-kien-truc-phan-vung.puml` | 4.1 |
+| 2 | DFD mức 1 có trust boundary | DFD | `02-dfd-muc-1.puml` | 4.5 |
+| 3 | Use case + misuse case | Use case | `03-usecase-misusecase.puml` | 3.2 |
+| 4 | Đăng nhập + MFA | Sequence | `04-sequence-dang-nhap-mfa.puml` | 5.3 |
+| 5 | Sửa điểm có step-up + audit | Sequence | `05-sequence-sua-diem.puml` | 5.5 |
+| 6 | Pipeline 12 lớp kiểm chứng | Activity | `06-activity-pipeline.puml` | 4.6 (hình cả trang) |
+| 7 | KB2: token bị đánh cắp | Sequence | `07-sequence-kb2-token-bi-danh-cap.puml` | 6.1 |
+| 8 | ERD 6 bảng | ERD | `08-erd.puml` | 5.2 |
+
+Sơ đồ 6 có 12 nhánh nối tiếp nên rất cao; khi vẽ nên chia 3 cột (lớp 1–4, 5–8,
+9–12) nối bằng connector tròn, để vừa một trang A4.
 
 ### E. Runbook theo sự cố
 

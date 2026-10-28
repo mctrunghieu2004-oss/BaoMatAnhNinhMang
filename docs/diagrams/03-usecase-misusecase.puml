@@ -1,33 +1,48 @@
 @startuml
-' So do 3: Use case + misuse case
-title SecureGrade - Use case va Misuse case
+' Sơ đồ 3: Use case + misuse case
+' Bố cục khi vẽ lại: 2 cột. Cột trái = use case hợp lệ (ellipse xanh),
+' cột phải = misuse case (ellipse đỏ nhạt). Mũi tên "đe dọa" đi từ phải sang trái,
+' mũi tên "giảm thiểu" đi từ trái sang phải.
+!include _style.puml
+title Sơ đồ 3 — Use case hợp lệ và Misuse case
 
 left to right direction
 
-actor "Sinh vien" as sv
-actor "Giang vien" as gv
-actor "Admin" as ad
-actor "Ke tan cong" as atk #red
-actor "Insider\n(quyen tren host/DB)" as ins #red
-
-rectangle "SecureGrade" {
-  usecase "Dang nhap (mat khau)" as UC1
-  usecase "Bat / xac minh MFA TOTP" as UC2
-  usecase "Xem diem cua minh" as UC3
-  usecase "Xem bang diem lop minh day" as UC4
-  usecase "Sua diem (step-up OTP)" as UC5
-  usecase "Xem canh bao, audit log" as UC6
-  usecase "Kiem tra toan ven" as UC7
-  usecase "Thu hoi phien / reset MFA / mo khoa" as UC8
+skinparam usecase {
+  BackgroundColor #DCE6F1
+  BorderColor #2E5C8A
+  BackgroundColor<<mis>> #FADBD8
+  BorderColor<<mis>> #C0392B
+}
+skinparam rectangle {
+  BackgroundColor #F4F6F8
+  BorderColor #2E5C8A
 }
 
-rectangle "Misuse case" {
-  usecase "KB1 Phishing lay mat khau GV" as MU1 #FFD6D6
-  usecase "KB2 Danh cap cookie phien" as MU2 #FFD6D6
-  usecase "KB3 Gia mao JWT de nang quyen" as MU3 #FFD6D6
-  usecase "KB4 IDOR doi enrollmentId" as MU4 #FFD6D6
-  usecase "KB5 SQLi / XSS qua o nhap" as MU5 #FFD6D6
-  usecase "KB6 Sua diem, xoa log trong DB" as MU6 #FFD6D6
+actor "Sinh viên" as sv
+actor "Giảng viên" as gv
+actor "Admin" as ad
+actor "Kẻ tấn công" as atk #C0392B
+actor "Insider\n(có quyền trên host/DB)" as ins #C0392B
+
+rectangle "SecureGrade — chức năng hợp lệ" {
+  usecase "UC1 — Đăng nhập bằng mật khẩu" as UC1
+  usecase "UC2 — Bật / xác minh MFA TOTP" as UC2
+  usecase "UC3 — Xem điểm của mình" as UC3
+  usecase "UC4 — Xem bảng điểm lớp mình dạy" as UC4
+  usecase "UC5 — Sửa điểm (bắt buộc step-up OTP)" as UC5
+  usecase "UC6 — Xem cảnh báo và audit log" as UC6
+  usecase "UC7 — Kiểm tra toàn vẹn" as UC7
+  usecase "UC8 — Thu hồi phiên / reset MFA / mở khoá" as UC8
+}
+
+rectangle "Misuse case — hành vi cần ngăn" {
+  usecase "KB1 — Phishing lấy mật khẩu GV" as MU1 <<mis>>
+  usecase "KB2 — Đánh cắp cookie phiên" as MU2 <<mis>>
+  usecase "KB3 — Giả mạo JWT để nâng quyền" as MU3 <<mis>>
+  usecase "KB4 — IDOR: đổi enrollmentId" as MU4 <<mis>>
+  usecase "KB5 — SQLi / XSS qua ô nhập" as MU5 <<mis>>
+  usecase "KB6 — Sửa điểm, xoá log thẳng trong DB" as MU6 <<mis>>
 }
 
 sv --> UC1
@@ -48,14 +63,14 @@ atk --> MU4
 atk --> MU5
 ins --> MU6
 
-MU1 ..> UC1 : threatens
-MU2 ..> UC5 : threatens
-MU3 ..> UC6 : threatens
-MU4 ..> UC5 : threatens
-MU5 ..> UC5 : threatens
-MU6 ..> UC7 : threatens
+MU1 .[#C0392B].> UC1 : đe dọa
+MU2 .[#C0392B].> UC5 : đe dọa
+MU3 .[#C0392B].> UC6 : đe dọa
+MU4 .[#C0392B].> UC5 : đe dọa
+MU5 .[#C0392B].> UC5 : đe dọa
+MU6 .[#C0392B].> UC7 : đe dọa
 
-UC2 ..> MU1 : <<mitigates>>
-UC5 ..> MU2 : <<mitigates>>
-UC7 ..> MU6 : <<mitigates>>
+UC2 .[#1E8449].> MU1 : <<giảm thiểu>>
+UC5 .[#1E8449].> MU2 : <<giảm thiểu>>
+UC7 .[#1E8449].> MU6 : <<giảm thiểu>>
 @enduml

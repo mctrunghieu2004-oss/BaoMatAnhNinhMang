@@ -1,56 +1,72 @@
 @startuml
-' So do 4: Sequence dang nhap + MFA
-title Luong dang nhap: mat khau -> token pre-MFA -> OTP -> token day du
+' Sơ đồ 4: Sequence đăng nhập + MFA
+' Bố cục khi vẽ lại: 6 lifeline dọc theo thứ tự dưới đây, mũi tên ngang theo thời gian.
+' Các khối alt/group vẽ bằng khung chữ nhật bao quanh nhóm mũi tên, nhãn ở góc trên trái.
+!include _style.puml
+title Sơ đồ 4 — Đăng nhập: mật khẩu → token pre-MFA → OTP → token đầy đủ
 
-actor "Nguoi dung" as u
+skinparam sequence {
+  ParticipantBackgroundColor #DCE6F1
+  ParticipantBorderColor #2E5C8A
+  ActorBackgroundColor #DCE6F1
+  ActorBorderColor #2E5C8A
+  LifeLineBorderColor #7F8C8D
+  GroupBackgroundColor #F4F6F8
+  GroupBorderColor #2E5C8A
+}
+
+actor "Người dùng" as u
 participant "WAF" as w
-participant "app /api/auth" as a
-participant "sessions" as s
-participant "users" as usr
-participant "audit_log" as log
+participant "app\n/api/auth" as a
+database "users" as usr
+database "sessions" as s
+database "audit_log" as log
 
-u -> w : POST /api/auth/login {username, password}
-w -> a : da loc payload (CRS)
-a -> a : rate limit 10/15 phut/IP
+u -> w : POST /api/auth/login\n{username, password}
+w -> a : đã lọc payload (CRS v4)
+a -> a : rate limit — 10 lần / 15 phút / IP
 a -> usr : SELECT * WHERE username = $1
-a -> a : bcrypt.compare (DUMMY_HASH neu khong co user)
+a -> a : bcrypt.compare\n(so với DUMMY_HASH nếu không có user\n→ thời gian trả lời bằng nhau)
+
 alt locked_until > now()
   a -> log : LOGIN_WHILE_LOCKED (WARN)
   a --> u : 423 ACCOUNT_LOCKED
-else sai mat khau
-  a -> usr : failed_attempts + 1, khoa khi >= 5
+else sai mật khẩu
+  a -> usr : failed_attempts + 1, khoá khi ≥ 5
   a -> log : LOGIN_FAIL / ACCOUNT_LOCKED
-  a --> u : 401 INVALID_CREDENTIALS (cung 1 thong bao)
-else dung mat khau
+  a --> u : 401 INVALID_CREDENTIALS\n(cùng một thông báo, không lộ user tồn tại)
+else đúng mật khẩu
   a -> usr : failed_attempts = 0
-  a -> s : INSERT session (mfa_verified = false, TTL 300s)\nfingerprint = SHA256(UA + IP)
+  a -> s : INSERT session\nmfa_verified = false, TTL 300s\nfingerprint = SHA-256(User-Agent + IP)
   a -> log : LOGIN_PASSWORD_OK (INFO)
   a --> u : 200 {next: MFA_ENROLL | MFA_VERIFY}\nSet-Cookie sg_token (HttpOnly, SameSite=Strict)
 end
 
-group Lan dau: MFA_ENROLL
+group Lần đầu — MFA_ENROLL
   u -> a : POST /api/auth/mfa/setup
   a -> usr : UPDATE mfa_secret = generateSecret()
   a --> u : 200 {qr: data URL}
-  u -> u : quet QR bang app authenticator
+  u -> u : quét QR bằng app authenticator
   u -> a : POST /api/auth/mfa/enable {otp}
 end
 
-group Lan sau: MFA_VERIFY
+group Lần sau — MFA_VERIFY
   u -> a : POST /api/auth/mfa/verify {otp}
 end
 
-a -> a : checkOtp(): dinh dang 6 so -> chong replay (last_otp, 90s) -> verify TOTP
+a -> a : checkOtp()\n1. đúng định dạng 6 chữ số\n2. chống replay: khác last_otp trong 90s\n3. verify TOTP (RFC 6238, epochTolerance 30s)
+
 alt OTP sai
-  a -> usr : mfa_failed + 1, khoa khi >= 3
+  a -> usr : mfa_failed + 1, khoá khi ≥ 3
   a -> log : MFA_FAIL_INVALID / MFA_FAIL_THRESHOLD (HIGH)
-  a -> s : revoke session (MFA_FAIL_THRESHOLD)
-  a --> u : 401 OTP_INVALID hoac 423 ACCOUNT_LOCKED
-else OTP dung
+  a -> s : revoke session (lý do MFA_FAIL_THRESHOLD)
+  a --> u : 401 OTP_INVALID hoặc 423 ACCOUNT_LOCKED
+else OTP đúng
   a -> usr : last_otp = otp, mfa_failed = 0
-  a -> s : revoke session cu (UPGRADED)  <- chong session fixation
-  a -> s : INSERT session moi (mfa_verified = true, TTL 900s)
+  a -> s : revoke session cũ (lý do UPGRADED)
+  note right of s: Cấp session **mới** thay vì nâng cấp\nsession cũ → chống session fixation
+  a -> s : INSERT session mới\nmfa_verified = true, TTL 900s
   a -> log : LOGIN_SUCCESS / MFA_ENROLLED
-  a --> u : 200 {role} + cookie moi
+  a --> u : 200 {role} + cookie mới
 end
 @enduml

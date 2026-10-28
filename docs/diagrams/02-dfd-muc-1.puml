@@ -1,60 +1,76 @@
 @startuml
-' So do 2: DFD muc 1 co trust boundary
-title SecureGrade - DFD muc 1 (trust boundary)
+' Sơ đồ 2: DFD mức 1 có trust boundary
+' Bố cục khi vẽ lại: 4 dải ngang xếp từ trên xuống, mỗi dải là một trust boundary
+' (vẽ bằng khung nét đứt trong draw.io). Dữ liệu chảy từ trên xuống dưới.
+!include _style.puml
+title Sơ đồ 2 — DFD mức 1 với trust boundary
 
 skinparam componentStyle rectangle
+skinparam package {
+  BackgroundColor #F4F6F8
+  BorderColor #2E5C8A
+  BorderThickness 1
+}
+skinparam component {
+  BackgroundColor #DCE6F1
+  BorderColor #2E5C8A
+}
+skinparam database {
+  BackgroundColor #FFFFFF
+  BorderColor #2E5C8A
+}
 
-actor "SV" as sv
-actor "GV" as gv
+actor "Sinh viên" as sv
+actor "Giảng viên" as gv
 actor "Admin" as ad
 
-package "Trust boundary 1: Internet (KHONG tin)" {
-  component "Trinh duyet / Postman / curl" as client
+package "Trust boundary 1 — Internet (KHÔNG tin)" {
+  component "Trình duyệt / Postman / curl" as client
 }
 
-package "Trust boundary 2: DMZ (loc cu phap)" {
-  component "P0 - WAF\nloc payload da biet" as p0
+package "Trust boundary 2 — DMZ (lọc cú pháp)" {
+  component "P0 — WAF\nlọc payload đã biết theo CRS" as p0
 }
 
-package "Trust boundary 3: App (kiem chung nghiep vu)" {
-  component "P1 - Xac thuc\npassword + TOTP + session" as p1
-  component "P2 - Phan quyen\nRBAC + ownership" as p2
-  component "P3 - Nghiep vu diem\nvalidate + step-up OTP" as p3
-  component "P4 - Audit + Detect\nhash-chain, rule tuong quan" as p4
-  component "P5 - Phan ung su co\nrevoke / reset MFA / unlock" as p5
+package "Trust boundary 3 — App (kiểm chứng nghiệp vụ)" {
+  component "P1 — Xác thực\nmật khẩu + TOTP + session" as p1
+  component "P2 — Phân quyền\nRBAC + ownership" as p2
+  component "P3 — Nghiệp vụ điểm\nvalidate + step-up OTP" as p3
+  component "P4 — Audit + Detect\nhash-chain, rule tương quan 60s" as p4
+  component "P5 — Phản ứng sự cố\nrevoke / reset MFA / unlock" as p5
 }
 
-package "Trust boundary 4: Data (chi app_user truy cap)" {
+package "Trust boundary 4 — Data (chỉ app_user truy cập)" {
   database "D1 users" as d1
   database "D2 sessions" as d2
-  database "D3 courses/enrollments" as d3
+  database "D3 courses + enrollments" as d3
   database "D4 grades" as d4
-  database "D5 audit_log (append-only)" as d5
+  database "D5 audit_log\n(append-only)" as d5
 }
 
 sv --> client
 gv --> client
 ad --> client
 client --> p0 : "request + cookie sg_token"
-p0 --> p1 : "request da loc"
-p1 --> d1 : "doc hash, mfa_secret, trang thai khoa"
-p1 --> d2 : "tao / thu hoi session"
-p1 --> p2 : "req.user (role doc tu DB)"
-p2 --> d3 : "kiem tra ownership"
+p0 --> p1 : "request đã lọc"
+p1 --> d1 : "đọc password_hash, mfa_secret, trạng thái khoá"
+p1 --> d2 : "tạo / thu hồi session"
+p1 --> p2 : "req.user — role đọc từ DB"
+p2 --> d3 : "kiểm tra ownership"
 p2 --> p3
-p3 --> d4 : "UPDATE / INSERT diem"
+p3 --> d4 : "UPDATE / INSERT điểm"
 p3 --> p4
 p1 --> p4
 p2 --> p4
-p4 --> d5 : "INSERT (khong UPDATE, khong DELETE)"
-p4 --> d4 : "doi chieu diem voi log"
+p4 --> d5 : "INSERT (không UPDATE, không DELETE)"
+p4 --> d4 : "đối chiếu điểm với log"
 ad --> p5
 p5 --> d1
 p5 --> d2
 
 note right of p0
-  Du lieu di qua day van bi coi la
-  KHONG DANG TIN: WAF chi loc cu phap,
-  khong hieu nghiep vu.
+  Dữ liệu đi qua đây **vẫn bị coi là không đáng tin**:
+  WAF chỉ lọc cú pháp, không hiểu nghiệp vụ.
+  Mọi kiểm chứng có ý nghĩa nằm ở P1–P3.
 end note
 @enduml

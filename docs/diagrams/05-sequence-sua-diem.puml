@@ -1,49 +1,74 @@
 @startuml
-' So do 5: Sequence sua diem co step-up + audit cung transaction
-title Sua diem: 4 cong kiem chung + audit trong cung transaction
+' Sơ đồ 5: Sequence sửa điểm — 4 cổng kiểm chứng + audit cùng transaction
+' Bố cục khi vẽ lại: 7 lifeline dọc. Chú ý vẽ rõ khối BEGIN...COMMIT bao quanh
+' hai lệnh INSERT cuối — đó là ý chính của sơ đồ này.
+!include _style.puml
+title Sơ đồ 5 — Sửa điểm: 4 cổng kiểm chứng và audit trong cùng transaction
 
-actor "Giang vien" as gv
+skinparam sequence {
+  ParticipantBackgroundColor #DCE6F1
+  ParticipantBorderColor #2E5C8A
+  ActorBackgroundColor #DCE6F1
+  ActorBorderColor #2E5C8A
+  LifeLineBorderColor #7F8C8D
+  GroupBackgroundColor #F4F6F8
+  GroupBorderColor #2E5C8A
+}
+
+actor "Giảng viên" as gv
 participant "WAF" as w
 participant "requireAuth" as auth
 participant "requireRole" as rbac
 participant "requireStepUp" as step
-participant "handler PUT /api/grades/:id" as h
+participant "handler\nPUT /api/grades/:id" as h
 database "PostgreSQL" as db
 
-gv -> w : PUT /api/grades/5\n{score: 8.5, reason}\nCookie sg_token, Header X-OTP
-w -> auth : da loc payload (CRS 4)
+gv -> w : PUT /api/grades/5\n{score: 8.5, reason}\nCookie sg_token + Header X-OTP
+w -> auth : đã lọc payload (CRS v4)
+
 auth -> db : SELECT session JOIN users WHERE s.id = claims.sid
-auth -> auth : chu ky HS256 + iss/aud/exp\nsession ton tai, chua revoke, chua het han\nfingerprint khop, mfa_verified = true
-note right of auth: role lay tu bang users,\nKHONG lay tu claim trong token
+auth -> auth : 1. chữ ký HS256 + iss / aud / exp\n2. session tồn tại, chưa revoke, chưa hết hạn\n3. fingerprint khớp\n4. mfa_verified = true
+note right of auth
+  **role lấy từ bảng users**,
+  không lấy từ claim trong token
+end note
+
 auth -> rbac : req.user
-rbac -> rbac : role phai la LECTURER\n(ADMIN bi tu choi: separation of duties)
+rbac -> rbac : role phải là LECTURER\n(ADMIN bị từ chối — separation of duties)
 rbac -> step
-step -> db : checkOtp(): last_otp trong 90s, verify TOTP
-alt thieu hoac sai X-OTP
+step -> db : checkOtp() — khác last_otp trong 90s, verify TOTP
+
+alt thiếu hoặc sai X-OTP
   step -> db : INSERT audit STEP_UP_FAIL_* (HIGH)
   step --> gv : 401 STEP_UP_REQUIRED
 end
+
 step -> h
-h -> h : validate: score 0-10, toi da 2 chu so thap phan,\nreason 5-200 ky tu
-alt du lieu khong hop le
+h -> h : validate — score 0..10, tối đa 2 chữ số thập phân,\nreason dài 5..200 ký tự
+
+alt dữ liệu không hợp lệ
   h -> db : INSERT audit INPUT_REJECTED (WARN)
   h --> gv : 400 INVALID_INPUT
 end
+
 h -> db : BEGIN
 h -> db : pg_advisory_xact_lock(1, enrollmentId)
 h -> db : SELECT c.lecturer_id, g.score AS old_score ...
-alt khong phai lop cua minh (IDOR)
+
+alt không phải lớp của mình (IDOR)
   h -> db : ROLLBACK
   h -> db : INSERT audit ACCESS_DENIED_IDOR (HIGH)
   h --> gv : 403 FORBIDDEN / 404 NOT_FOUND
-else dung chu so huu
+else đúng chủ sở hữu
   h -> db : INSERT ... ON CONFLICT DO UPDATE grades
-  h -> db : INSERT audit_log GRADE_UPDATE {old, new, reason}\nprev_hash + hash (cung transaction)
+  h -> db : INSERT audit_log GRADE_UPDATE {old, new, reason}\nprev_hash + hash
   h -> db : COMMIT
   h --> gv : 200 {ok: true}
 end
+
 note bottom
-  Audit nam trong CUNG transaction voi diem:
-  co diem thi chac chan co log, va nguoc lai.
+  Audit nằm trong **cùng transaction** với điểm:
+  có điểm thì chắc chắn có log, và ngược lại.
+  Không tồn tại trạng thái "điểm đổi mà không có dấu vết".
 end note
 @enduml
