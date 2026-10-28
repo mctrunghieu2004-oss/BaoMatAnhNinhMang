@@ -3,9 +3,31 @@
 **Đồ án cuối kỳ — Bảo mật mạng máy tính và hệ thống**
 Hướng 1: Thiết kế hệ thống an toàn
 
+| | |
+| --- | --- |
+| Giảng viên hướng dẫn | *(điền)* |
+| Nhóm | *(điền tên nhóm)* |
+| Thành viên | *(điền họ tên — MSSV, mỗi người một dòng)* |
+| Ngày nộp | *(điền)* |
+
+
 > Toàn bộ số liệu trong báo cáo này được đo trên prototype thật, chạy ngày 26/10/2026.
 > Môi trường đo: Windows 11, Docker Desktop 29.3.1, Node.js 22 (container) / 24 (host),
 > PostgreSQL 16-alpine, ModSecurity 3.0.17 + OWASP CRS 4.30.0.
+
+---
+
+## Mục lục
+
+1. Chương 1. Giới thiệu
+2. Chương 2. Cơ sở lý thuyết
+3. Chương 3. Phân tích tài sản và rủi ro
+4. Chương 4. Thiết kế kiến trúc
+5. Chương 5. Hiện thực prototype
+6. Chương 6. Kịch bản tấn công và kiểm thử
+7. Chương 7. Phân tích trade-off
+8. Chương 8. Kết luận
+9. Phụ lục
 
 ---
 
@@ -182,6 +204,10 @@ sửa. Giảm thiểu: mỗi ngày admin ghi `lastHash` ra ngoài hệ thống (
 
 ### 3.2 Tác nhân đe dọa
 
+![Sơ đồ 3 — Use case và misuse case](diagrams/03-usecase-misusecase.png)
+
+*Hình 3.1 — Use case hợp lệ (trái) đặt cạnh misuse case của kẻ tấn công (phải).*
+
 | Tác nhân | Vị thế | Động cơ | Năng lực giả định |
 | --- | --- | --- | --- |
 | Sinh viên muốn sửa điểm | Có tài khoản hợp lệ (STUDENT) | Nâng điểm của mình, xem điểm người khác | Biết đọc DevTools, sửa request, đổi ID trong URL |
@@ -219,6 +245,10 @@ ngắn).
 ## Chương 4. Thiết kế kiến trúc
 
 ### 4.1 Phân vùng mạng (sơ đồ 01)
+
+![Sơ đồ 1 — Kiến trúc phân vùng](diagrams/01-kien-truc-phan-vung.png)
+
+*Hình 4.1 — 3 zone, 4 luồng được phép (F1–F4), 5 luồng bị chặn (D1–D5).*
 
 Hệ thống gồm 3 container nằm trên 3 Docker network tách biệt; **chỉ WAF được publish
 port**. Đây là bản thu nhỏ của mô hình Internet → DMZ/WAF → App → Database.
@@ -295,11 +325,17 @@ dấu hiệu gián tiếp.
 
 ### 4.5 Luồng dữ liệu (sơ đồ 02)
 
+![Sơ đồ 2 — DFD mức 1](diagrams/02-dfd-muc-1.png)
+
+*Hình 4.2 — DFD mức 1 với trust boundary giữa các zone.*
+
 DFD mức 1 chia hệ thống thành 4 trust boundary. Điểm thiết kế đáng chú ý: **dữ liệu đi qua
 WAF vẫn bị coi là không đáng tin** — WAF chỉ lọc cú pháp (biết "đây là chuỗi giống SQLi"),
 không hiểu nghiệp vụ (không biết "giảng viên này có dạy lớp đó hay không").
 
 ### 4.6 Pipeline kiểm chứng cho request sửa điểm (sơ đồ 06)
+
+*Sơ đồ 06 (activity, 409×3031) đặt làm hình cả trang Ở phụ lục D.*
 
 Thứ tự thực thi, mỗi lớp độc lập với lớp trước:
 
@@ -374,6 +410,10 @@ BaoMatAnNinhMang/
 
 ### 5.2 Phân quyền database (least privilege)
 
+![Sơ đồ 8 — ERD](diagrams/08-erd.png)
+
+*Hình 5.1 — ERD 6 bảng; `audit_log` là bảng duy nhất chỉ được INSERT.*
+
 | Bảng | SELECT | INSERT | UPDATE | DELETE | Lý do |
 | --- | --- | --- | --- | --- | --- |
 | `users` | ✅ | ✅ | ✅ | ❌ | Cập nhật MFA, số lần sai, khoá tài khoản |
@@ -387,6 +427,14 @@ Kiểm chứng (TC23): 4 lệnh `DELETE FROM audit_log`, `UPDATE audit_log`, `DE
 vẫn chạy được.
 
 ### 5.3 Xác thực hai bước (sơ đồ 04)
+
+![Sơ đồ 4 — Sequence đăng nhập + MFA](diagrams/04-sequence-dang-nhap-mfa.png)
+
+*Hình 5.2 — Luồng đăng nhập hai bước.*
+
+![Mã QR lúc bật MFA](evidence/screenshots/02-mfa-enroll-ma-qr.png)
+
+*Hình 5.3 — Màn hình đăng ký MFA lần đầu (TC01).*
 
 Mật khẩu đúng chỉ cho một **token pre-MFA sống 5 phút**; chỉ sau khi OTP đúng mới có token
 đầy đủ sống 15 phút. Mọi token đều phải khớp một session còn hiệu lực trong DB.
@@ -441,6 +489,14 @@ const { valid } = await verify({ secret: user.mfa_secret, token, epochTolerance:
 
 ### 5.5 Step-up OTP và ownership khi sửa điểm (sơ đồ 05)
 
+![Sơ đồ 5 — Sequence sửa điểm](diagrams/05-sequence-sua-diem.png)
+
+*Hình 5.4 — Sửa điểm: step-up OTP, ownership, audit cùng transaction.*
+
+![Dialog sửa điểm có ô OTP](evidence/screenshots/04-dialog-sua-diem-co-step-up-otp.png)
+
+*Hình 5.5 — Giao diện sửa điểm bắt buộc nhập OTP mới.*
+
 Sửa điểm phải qua 4 cổng: đúng vai trò LECTURER, **đúng lớp mình dạy**, dữ liệu hợp lệ, và
 **một OTP mới ngay tại thời điểm sửa**. Cổng thứ 4 khiến cookie bị đánh cắp vẫn không đủ để
 sửa điểm. ADMIN không có quyền sửa điểm (separation of duties).
@@ -481,6 +537,10 @@ if (severity === 'HIGH' || severity === 'CRITICAL') console.warn(`[ALERT][${seve
 
 ### 5.7 Kiểm tra toàn vẹn: hai phép đối chiếu độc lập
 
+![Phát hiện vi phạm toàn vẹn](evidence/screenshots/07-admin-phat-hien-vi-pham-toan-ven.png)
+
+*Hình 5.6 — Insider sửa điểm thẳng trong DB bằng role `postgres`; hệ thống chỉ ra `enrollment 3: DB=10 / log=8.75` (KB6, TC22).*
+
 `GET /api/admin/integrity` chạy hai hàm:
 
 1. `verifyChain()` — đi hết `audit_log` theo `id`, tính lại hash từng dòng, trả về danh
@@ -492,6 +552,10 @@ if (severity === 'HIGH' || severity === 'CRITICAL') console.warn(`[ALERT][${seve
 Có vi phạm thì ghi `INTEGRITY_VIOLATION` (CRITICAL) kèm danh sách cụ thể.
 
 ### 5.8 Danh mục sự kiện audit
+
+![Tab cảnh báo](evidence/screenshots/06-admin-tab-canh-bao-critical.png)
+
+*Hình 5.7 — Trang admin: `SESSION_CONTEXT_MISMATCH` và `INTEGRITY_VIOLATION` Ở mức CRITICAL.*
 
 | Action | Severity | Phát sinh khi | Phản ứng tự động |
 | --- | --- | --- | --- |
@@ -534,6 +598,14 @@ thời gian đã có cảnh báo cùng loại cho người đó chưa, để kh�
 
 ### 5.11 Giao diện (5 trang)
 
+![Trang đăng nhập](evidence/screenshots/01-dang-nhap.png)
+
+![Bảng điểm lớp của giảng viên](evidence/screenshots/03-giang-vien-bang-diem-lop.png)
+
+![Trang sinh viên](evidence/screenshots/10-sinh-vien-xem-diem.png)
+
+*Hình 5.8–5.10 — Trang đăng nhập, trang giảng viên, trang sinh viên (chỉ thấy điểm của chính mình).*
+
 | File | Chức năng | API gọi |
 | --- | --- | --- |
 | `login.html` | Form username/password, chuyển sang `mfa.html` theo `next` | `/api/auth/login` |
@@ -572,6 +644,10 @@ trang theo role chỉ là tiện lợi — quyền thật sự do server kiểm 
 ## Chương 6. Kịch bản tấn công và kiểm thử
 
 ### 6.1 Sáu kịch bản tấn công
+
+![Sơ đồ 7 — KB2 token bị đánh cắp](diagrams/07-sequence-kb2-token-bi-danh-cap.png)
+
+*Hình 6.1 — KB2: cookie hợp lệ dùng từ thiết bị khác bị fingerprint chặn.*
 
 | KB | Kịch bản | Đầu vào bị giả mạo/đánh cắp | PREVENT | DETECT | RECOVER |
 | --- | --- | --- | --- | --- | --- |

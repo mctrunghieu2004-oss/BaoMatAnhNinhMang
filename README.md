@@ -172,27 +172,25 @@ docs/                     BAO_CAO.md · SLIDE.md · diagrams/ · evidence/
 
 ## 7. Việc còn lại
 
-Code, test, báo cáo, slide, sơ đồ và bằng chứng đã xong. Còn **hai việc**, cả hai đều cần
-có mặt bạn:
+Code, test, 8 sơ đồ PNG, 11 file bằng chứng và 10 ảnh giao diện đã xong; ảnh đã được
+chèn sẵn vào `docs/BAO_CAO.md`. Còn **ba việc**, cả ba đều cần có mặt bạn:
 
-1. ~~Render 8 sơ đồ ra PNG~~ — **đã xong**, xem `docs/diagrams/*.png`. Chỉ còn việc chèn
-   vào báo cáo và slide. Render lại sau khi sửa `.puml`:
-
-   ```bash
-   docker run --rm -v "//d/BaoMatAnNinhMang/docs/diagrams:/data" plantuml/plantuml -tpng -o /data "/data/*.puml"
-   ```
-
-   Sơ đồ 06 (pipeline) rất cao và hẹp (409×3031) — để nguyên làm hình cả trang trong phụ
-   lục báo cáo, đừng đưa lên slide; slide 6 đã có sẵn bản rút gọn dạng chữ.
-2. ~~Chụp bằng chứng~~ — **đã xong**: 11 file output terminal + 10 ảnh chụp màn hình giao
-   diện trong [`docs/evidence/`](docs/evidence/README.md), kèm hướng dẫn chụp lại bằng tay.
-3. **Chuyển báo cáo + slide sang định dạng nộp** (~60 phút) — dán `docs/BAO_CAO.md` vào
-   Word/Google Docs, thêm trang bìa, mục lục, chèn ảnh sơ đồ và ảnh bằng chứng, xuất PDF.
-   `docs/SLIDE.md` dán sang PowerPoint theo từng slide.
-4. **Tổng duyệt demo 2 lần** (~40 phút) — theo kịch bản ở cuối `docs/SLIDE.md`. Làm đúng
+1. **Điền thông tin nhóm** — bảng ở đầu `docs/BAO_CAO.md` và Slide 1 của `docs/SLIDE.md`
+   đang để trống: GVHD, tên nhóm, họ tên + MSSV từng thành viên, ngày nộp.
+2. **Chuyển báo cáo + slide sang định dạng nộp** (~60 phút) — `docs/BAO_CAO.md` sang
+   Word/Google Docs rồi xuất PDF; `docs/SLIDE.md` dán sang PowerPoint theo từng slide.
+   Sơ đồ 06 (pipeline, 409×3031) để nguyên làm hình cả trang trong phụ lục D, đừng
+   đưa lên slide — slide 6 đã có bản rút gọn dạng chữ.
+3. **Tổng duyệt demo 2 lần** (~40 phút) — theo kịch bản cuối `docs/SLIDE.md`, làm đúng
    checklist "Chuẩn bị trước demo 30 phút", và quay video OBS dự phòng.
 
-Điền tên nhóm vào trang bìa báo cáo và Slide 1 trước khi nộp.
+Kịch bản demo đang chia vai TV1–TV4; nếu nhóm ít hơn 4 người thì gộp vai lại.
+
+Render lại sơ đồ sau khi sửa `.puml`:
+
+```bash
+docker run --rm -v "//d/BaoMatAnNinhMang/docs/diagrams:/data" plantuml/plantuml -tpng -o /data "/data/*.puml"
+```
 
 ### Checklist nộp bài
 

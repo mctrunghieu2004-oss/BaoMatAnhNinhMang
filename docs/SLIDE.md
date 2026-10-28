@@ -11,7 +11,9 @@ Quy ước: **tiêu đề** — nội dung hiển thị trên slide — *(ghi ch
 
 - Đồ án cuối kỳ: Bảo mật mạng máy tính và hệ thống
 - Hướng 1: Thiết kế hệ thống an toàn
-- Nhóm: *(điền tên 4 thành viên + MSSV)*
+- Nhóm: *(điền tên nhóm)*
+- Thành viên: *(họ tên — MSSV từng người)*
+- GVHD: *(điền)*
 
 *(30 giây. Nói ngay câu chốt: "Câu hỏi của đồ án này là — hệ thống dựa vào đâu để tin một thông tin.")*
 
