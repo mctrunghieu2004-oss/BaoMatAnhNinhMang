@@ -12,6 +12,7 @@ thống**, Hướng 1 (thiết kế hệ thống an toàn).
 | Báo cáo đồ án (8 chương) | [`docs/BAO_CAO.md`](docs/BAO_CAO.md) — bản Word: `docs/BAO_CAO.docx` |
 | Slide + kịch bản demo 9'30 | [`docs/SLIDE.md`](docs/SLIDE.md) — bản PowerPoint: `docs/SLIDE.pptx` |
 | 8 sơ đồ (PlantUML) | [`docs/diagrams/`](docs/diagrams) |
+| **Hướng dẫn tổng duyệt demo** | [`docs/HUONG_DAN_DEMO.md`](docs/HUONG_DAN_DEMO.md) |
 | Bằng chứng kiểm thử (11 file) | [`docs/evidence/`](docs/evidence/README.md) |
 | Đề bài | [`docs/DE_BAI.md`](docs/DE_BAI.md) |
 | Kế hoạch gốc | [`docs/KE_HOACH.md`](docs/KE_HOACH.md) |
