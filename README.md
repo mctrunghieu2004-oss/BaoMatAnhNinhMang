@@ -173,26 +173,29 @@ docs/                     BAO_CAO.md · SLIDE.md · diagrams/ · evidence/
 
 ## 7. Việc còn lại
 
-Code, test, 8 sơ đồ PNG, 11 file bằng chứng và 10 ảnh giao diện đã xong; ảnh đã được
-chèn sẵn vào `docs/BAO_CAO.md`. Còn **ba việc**, cả ba đều cần có mặt bạn:
+Code, test, 11 file bằng chứng và 10 ảnh giao diện đã xong. **8 sơ đồ đã vẽ tay bằng
+draw.io** và nhúng vào `docs/BAO_CAO.docx`. **Bộ slide đã dựng trên Canva**, 12 trang nền
+sáng, có ghi chú người nói theo khung 7 phút, xuất sẵn ra `docs/SLIDE.pptx`.
 
-1. **Điền thông tin nhóm** — bảng ở đầu `docs/BAO_CAO.md` và Slide 1 của `docs/SLIDE.md`
-   đang để trống: GVHD, tên nhóm, họ tên + MSSV từng thành viên, ngày nộp.
-2. **Chuyển báo cáo + slide sang định dạng nộp** (~60 phút) — `docs/BAO_CAO.md` sang
-   Word/Google Docs rồi xuất PDF; `docs/SLIDE.md` dán sang PowerPoint theo từng slide.
-   Sơ đồ 06 (pipeline, 409×3031) để nguyên làm hình cả trang trong phụ lục D, đừng
-   đưa lên slide — slide 6 đã có bản rút gọn dạng chữ.
-3. **Tổng duyệt demo 2 lần** (~40 phút) — theo kịch bản cuối `docs/SLIDE.md`, làm đúng
-   checklist "Chuẩn bị trước demo 30 phút", và quay video OBS dự phòng.
+Còn **bốn việc**, cả bốn đều cần có mặt bạn:
 
-Kịch bản demo đang chia vai TV1–TV4; nếu nhóm ít hơn 4 người thì gộp vai lại.
+1. **Điền thông tin nhóm** (~5 phút) — 4 ô trong bảng đầu `docs/BAO_CAO.md` (dòng 8–11:
+   GVHD, tên nhóm, họ tên + MSSV, ngày nộp) và 3 dòng gạch chân ở Slide 1 của
+   `docs/SLIDE.pptx`.
+2. **Xuất bản nộp** (~10 phút) — chạy lại phần xuất docx (xem mục dưới), mở bằng Word rồi
+   **File → Export → Create PDF**. Hiện chưa có `docs/BAO_CAO.pdf`.
+3. **Ẩn slide 3 và 6** (~1 phút) — mở `docs/SLIDE.pptx`, chuột phải vào slide ở khung bên
+   trái → **Hide Slide**. Hai slide này là dự phòng cho hỏi đáp, không chạy trong lượt
+   trình chiếu 7 phút. Ghi chú của chính hai slide đó cũng nhắc việc này.
+4. **Tổng duyệt demo 2 lần** (~40 phút) — theo [`docs/KICH_BAN_7P.md`](docs/KICH_BAN_7P.md),
+   bấm giờ riêng phần nói và phần demo, và quay video OBS dự phòng.
 
-**Sơ đồ**: `docs/diagrams/*.puml` là **bản đặc tả** để vẽ bằng draw.io, không phải ảnh
-đã render. Mỗi file ghi đủ thành phần, nhãn, quan hệ và có ghi chú bố cục ở đầu file;
-bảng màu quy ước ghi ở đầu mỗi file. Các file **tự chứa, không dùng `!include`**, nên
-dán thẳng vào draw.io hay plantuml.com đều hiển được. Vẽ xong xuất PNG đúng tên file tương ứng
-(ví dụ `01-kien-truc-phan-vung.png`) vào cùng thư mục — báo cáo đã trỏ sẵn tới các tên này
-nên không phải sửa gì thêm.
+Kịch bản demo rút gọn không chia vai; bản đầy đủ ở [`docs/HUONG_DAN_DEMO.md`](docs/HUONG_DAN_DEMO.md)
+chia vai TV1–TV4, nhóm ít hơn 4 người thì gộp vai lại.
+
+**Sơ đồ**: `docs/diagrams/*.puml` là **bản đặc tả** đã dùng để vẽ, giữ lại làm nguồn. Các
+file tự chứa, không dùng `!include`, nên dán thẳng vào draw.io hay plantuml.com đều hiển
+được — cần sửa sơ đồ thì sửa ở đây rồi vẽ lại và xuất PNG đè lên file cùng tên.
 
 ### Xuất lại file nộp
 
@@ -206,6 +209,16 @@ python scripts/export-docs.py
 Script sinh lại `docs/BAO_CAO.docx` (khổ A4, lề 2,5cm — lề trái 3cm để đóng gáy) và
 `docs/SLIDE.pptx`. Không cần cài pandoc riêng. Mở bằng Word rồi **File → Export →
 Create PDF** để ra bản PDF nộp.
+
+> ⚠️ **Script sẽ ghi đè `docs/SLIDE.pptx` bằng bản pandoc, mất bộ slide Canva.**
+> Bộ slide đang nộp dựng trên Canva, không sinh từ `docs/SLIDE.md`. Muốn xuất lại
+> **chỉ riêng báo cáo**, chạy:
+>
+> ```bash
+> python -c "import importlib.util,os,subprocess; s=importlib.util.spec_from_file_location('x','scripts/export-docs.py'); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); subprocess.run([m.PANDOC,'BAO_CAO.md','-f','gfm','-o',os.path.join(m.DOCS,'BAO_CAO.docx'),'--reference-doc',m.reference_a4(),'--resource-path','.','--syntax-highlighting','tango'],cwd=m.DOCS,check=True)"
+> ```
+>
+> Sửa slide thì sửa thẳng trong PowerPoint, hoặc mở lại bản Canva rồi xuất ra `.pptx`.
 
 Ghi chú về bản `.pptx`: ghi chú người nói nằm trong **ô Notes** của từng slide
 (View → Notes Page), không hiện trên màn chiếu. Kịch bản demo không được đưa vào
