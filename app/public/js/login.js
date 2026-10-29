@@ -10,7 +10,7 @@ document.getElementById('form').addEventListener('submit', async (e) => {
     location.href = '/mfa.html';
     return;
   }
-  show(status === 423 ? 'Tai khoan dang bi khoa, thu lai sau 15 phut.'
-     : status === 429 ? 'Qua nhieu lan thu, vui long doi.'
-     : 'Sai tai khoan hoac mat khau.');
+  show(status === 423 ? 'Tài khoản đang bị khoá, thử lại sau 15 phút.'
+     : status === 429 ? 'Quá nhiều lần thử, vui lòng đợi.'
+     : 'Sai tài khoản hoặc mật khẩu.');
 });

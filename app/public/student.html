@@ -3,18 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SecureGrade - Bang diem cua toi</title>
+<title>SecureGrade - Bảng điểm của tôi</title>
 <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
-<main>
-  <nav><span id="who"></span><button id="logout" class="secondary">Dang xuat</button></nav>
-  <h1>Bang diem cua toi</h1>
-  <table>
-    <tr><th>Ma mon</th><th>Ten mon</th><th>Diem</th><th>Cap nhat luc</th></tr>
-    <tbody id="rows"></tbody>
-  </table>
-  <div id="msg"></div>
+<header class="topbar">
+  <div class="brand"><span class="mark">SG</span>SecureGrade</div>
+  <div class="user"><span id="who"></span><button id="logout" class="ghost">Đăng xuất</button></div>
+</header>
+<main class="page">
+  <section class="card">
+    <h1>Bảng điểm của tôi</h1>
+    <p class="sub">Chỉ hiển thị điểm của chính bạn.</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Mã môn</th><th>Tên môn</th><th class="right">Điểm</th><th>Cập nhật lúc</th></tr>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div id="msg"></div>
+  </section>
 </main>
 <script type="module" src="/js/student.js"></script>
 </body>

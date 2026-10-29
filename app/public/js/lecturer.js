@@ -19,15 +19,18 @@ if (await guard('LECTURER')) {
 async function load() {
   tbody.replaceChildren();
   const { status, data } = await api(`/api/courses/${select.value}/grades`);
-  if (status !== 200) { show('Khong xem duoc lop nay.'); return; }
+  if (status !== 200) { show('Không xem được lớp này.'); return; }
   for (const r of data) {
     const tr = document.createElement('tr');
     const btn = document.createElement('button');
-    btn.textContent = 'Sua';
+    btn.textContent = 'Sửa';
+    btn.className = 'small';
     btn.addEventListener('click', () => openEditor(r));
     const td = document.createElement('td');
     td.append(btn);
-    tr.append(cell(r.username), cell(r.full_name), cell(r.score ?? 'Chua co'), td);
+    const diem = cell(r.score ?? 'Chưa có');
+    diem.className = r.score == null ? 'muted right' : 'score right';
+    tr.append(cell(r.username), cell(r.full_name), diem, td);
     tbody.append(tr);
   }
 }
@@ -51,8 +54,8 @@ document.getElementById('save').addEventListener('click', async (e) => {
   const otp = document.getElementById('otp').value;
   const { status, data } = await api(`/api/grades/${id}`, { method: 'PUT', body, otp });
   dialog.close();
-  if (status === 200) { show('Da luu diem.', false); await load(); return; }
-  show(data.error === 'STEP_UP_REQUIRED' ? 'Can ma OTP moi de sua diem.'
-     : data.error === 'FORBIDDEN' ? 'Ban khong day lop nay.'
-     : 'Du lieu khong hop le (diem 0-10, ly do tu 5 ky tu).');
+  if (status === 200) { show('Đã lưu điểm.', false); await load(); return; }
+  show(data.error === 'STEP_UP_REQUIRED' ? 'Cần mã OTP mới để sửa điểm.'
+     : data.error === 'FORBIDDEN' ? 'Bạn không dạy lớp này.'
+     : 'Dữ liệu không hợp lệ (điểm 0–10, lý do từ 5 ký tự).');
 });

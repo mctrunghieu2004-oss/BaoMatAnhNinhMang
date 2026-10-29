@@ -3,23 +3,33 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SecureGrade - Quan tri</title>
+<title>SecureGrade - Quản trị</title>
 <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
-<main>
-  <nav><span id="who"></span><button id="logout" class="secondary">Dang xuat</button></nav>
-  <h1>Bang dieu khien quan tri</h1>
-  <nav>
-    <button id="tab-alerts" class="secondary">Canh bao</button>
-    <button id="tab-audit" class="secondary">Audit log</button>
-    <button id="tab-integrity" class="secondary">Kiem tra toan ven</button>
-    <button id="tab-users" class="secondary">Nguoi dung</button>
-  </nav>
-  <label for="otp">Ma OTP cho thao tac quan tri (step-up)</label>
-  <input id="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
-  <div id="msg"></div>
-  <div id="out"></div>
+<header class="topbar">
+  <div class="brand"><span class="mark">SG</span>SecureGrade · Quản trị</div>
+  <div class="user"><span id="who"></span><button id="logout" class="ghost">Đăng xuất</button></div>
+</header>
+<main class="page">
+  <section class="card">
+    <h1>Bảng điều khiển quản trị</h1>
+    <p class="sub">Giám sát cảnh báo, nhật ký và toàn vẹn dữ liệu. Quản trị viên không sửa được điểm.</p>
+    <div class="row">
+      <nav class="tabs">
+        <button id="tab-alerts">Cảnh báo</button>
+        <button id="tab-audit">Audit log</button>
+        <button id="tab-integrity">Kiểm tra toàn vẹn</button>
+        <button id="tab-users">Người dùng</button>
+      </nav>
+      <div class="field otp-box">
+        <label for="otp">Mã OTP cho thao tác quản trị</label>
+        <input id="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+      </div>
+    </div>
+    <div id="msg"></div>
+    <div id="out"></div>
+  </section>
 </main>
 <script type="module" src="/js/admin.js"></script>
 </body>

@@ -3,20 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SecureGrade - Xac thuc hai lop</title>
+<title>SecureGrade - Xác thực hai lớp</title>
 <link rel="stylesheet" href="/css/app.css">
 </head>
-<body>
-<main>
-  <h1 id="title">Xac thuc hai lop</h1>
+<body class="auth">
+<main class="card auth-card">
+  <div class="auth-head">
+    <span class="mark">SG</span>
+    <div><strong>SecureGrade</strong><span>Xác thực hai lớp</span></div>
+  </div>
+  <h1 id="title">Xác thực hai lớp</h1>
   <div id="enroll">
-    <p>Quet ma QR bang Google Authenticator hoac Microsoft Authenticator, roi nhap ma 6 so.</p>
-    <img id="qr" alt="Ma QR TOTP">
+    <p class="sub">Quét mã QR bằng Google Authenticator hoặc Microsoft Authenticator, rồi nhập mã 6 số.</p>
+    <div class="qr-wrap"><img id="qr" alt="Mã QR TOTP"></div>
   </div>
   <form id="form">
-    <label for="otp">Ma OTP</label>
+    <label for="otp">Mã OTP</label>
     <input id="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
-    <p><button type="submit">Xac nhan</button></p>
+    <p class="hint">Mã đổi mỗi 30 giây và chỉ dùng được một lần.</p>
+    <button type="submit">Xác nhận</button>
   </form>
   <div id="msg"></div>
 </main>
