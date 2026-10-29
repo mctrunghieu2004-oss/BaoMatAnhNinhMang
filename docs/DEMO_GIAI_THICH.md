@@ -3,6 +3,10 @@
 Tài liệu này ghi lại đúng trình tự đã tổng duyệt ngày 29/10/2026, kèm lý do của từng bước.
 Đọc để **hiểu**, còn lúc demo thì dán lệnh từ [`LENH_DEMO.txt`](LENH_DEMO.txt).
 
+**Demo chính hiện là bản 3 phút, 2 cảnh** (D1 rút gọn + D3 + D4, bỏ D2, cookie copy sẵn trước
+giờ). File này vẫn giải thích đủ cả 4 cảnh vì bản 4 cảnh là phương án dự phòng, và vì D2 là
+nền tảng để hiểu D4.
+
 Kịch bản thời gian: [`KICH_BAN_7P.md`](KICH_BAN_7P.md). Bản đầy đủ 9 phút 30 có thêm KB1, KB3,
 KB4, KB5: [`HUONG_DAN_DEMO.md`](HUONG_DAN_DEMO.md).
 

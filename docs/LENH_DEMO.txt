@@ -22,6 +22,48 @@ node scripts/otp.mjs
 #   Cua so AN DANH  : admin / Admin@2026demo  -> tab Canh bao
 #   (Ctrl+Shift+N mo cua so an danh)
 
+# Cat cookie gv01 vao bien $c TRUOC khi bam gio (cua so THUONG:
+#   F12 -> Application -> Cookies -> sg_token -> Cookie Value -> Ctrl+A, Ctrl+C)
+#   Dan cookie vao giua hai dau ngoac kep (chuot phai de dan):
+$c = ""
+#   Kiem tra: phai ra khoang 280
+$c.Length
+#   Chay canh 1 trong vong 15 phut ke tu luc dang nhap gv01.
+#   $c chi dung duoc MOT lan: canh 1 thu hoi luon phien gv01.
+
+
+=====================================================================
+ DEMO CHINH — 2 CANH, ~2:50
+=====================================================================
+
+# --- Canh 0 (0:00-0:15) — phan vung ---
+cls
+docker compose ps
+#   Chi cot PORTS: chi waf co "->"
+
+# --- Canh 1 (0:15-1:15) — KB2 cookie bi danh cap ---
+cls
+curl.exe -s http://localhost:8080/api/me -H "Cookie: sg_token=$c"
+#   Mong doi: {"error":"SESSION_CONTEXT_MISMATCH"}   -> DUNG 3 GIAY
+#   gv01 bam chon lai lop -> bi da ra trang dang nhap
+#   admin -> tab Canh bao (bam lai) -> dong CRITICAL tren cung
+
+# --- Canh 2 (1:15-2:35) — KB6 insider sua DB ---
+#   admin -> tab Kiem tra toan ven -> "Diem lech so voi log: khong co"
+cls
+docker compose exec db psql -U postgres -d securegrade -c "UPDATE grades SET score = 10 WHERE enrollment_id = 1"
+#   admin -> bam lai tab Kiem tra toan ven -> enrollment 1: DB=10 / log=8.5   -> DUNG 3 GIAY
+cls
+docker compose exec db psql -U app_user -d securegrade -c "DELETE FROM audit_log WHERE id = 1"
+#   Mong doi: ERROR: permission denied for table audit_log
+
+# --- Canh 3 (2:35-2:50) — chot bang loi ---
+
+
+=====================================================================
+ BAN 4 CANH DU PHONG (~4 phut) — chi dung khi thay muon xem them
+=====================================================================
+
 
 ---------------------------------------------------------------------
  D1 — PHAN VUNG (0:00 - 0:25)

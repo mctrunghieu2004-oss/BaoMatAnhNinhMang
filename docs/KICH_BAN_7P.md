@@ -1,4 +1,4 @@
-# Kịch bản 7 phút nói + 4 phút demo
+# Kịch bản 7 phút nói + 3 phút demo
 
 Bản gốc ([`SLIDE.md`](SLIDE.md) và [`HUONG_DAN_DEMO.md`](HUONG_DAN_DEMO.md)) dựng cho
 10 phút nói và 9 phút 30 demo. File này là bản đã cắt cho khung 7 + 3–5 phút.
@@ -24,7 +24,7 @@ slide ở khung bên trái → **Hide Slide**. Slide vẫn nằm trong file, v�
 | ~~6~~ | ~~Pipeline 12 lớp~~ | — | **Ẩn.** Đã nói bằng một câu ở slide 5 |
 | 7 | Top 5 rủi ro | 40 | Lướt 4 dòng đầu, **dừng ở R08** — insider, hash-chain, TC22–TC24 |
 | 8 | DEMO | 5 | "Chuyển sang màn hình live" |
-| — | *(demo 4 phút)* | — | *tính vào ngân sách demo, không tính vào 7 phút* |
+| — | *(demo ~3 phút)* | — | *tính vào ngân sách demo, không tính vào 7 phút* |
 | 9 | Kết quả | 25 | 25/25 · 6 bình thường + 19 tấn công · phủ KB1–KB6 |
 | 10 | Trade-off | 50 | **Slide ghi điểm.** Ba con số: 1 sửa/30 giây · PL1 0/15 chặn oan · RTO 5–6 giây |
 | 11 | Hạn chế | 25 | Đọc nhanh 2 dòng: TOTP không chống AiTM → Passkey; superuser DB vẫn tính lại được hash-chain |
@@ -37,23 +37,116 @@ quá trình đo), slide 11 (dễ xin lỗi dài dòng). Ba slide này bấm gi�
 
 ---
 
-## Phần 2 — Demo (mục tiêu 3:55)
+## Phần 2 — Demo chính: 2 cảnh, mục tiêu 2:50
 
-Bỏ KB1, KB3, KB4, KB5. Giữ **KB2** và **KB6** — hai cái này là thứ phân biệt đồ án
-này với đồ án "làm web có đăng nhập".
+Bản 4 cảnh (lượt tập 29/10 mất ~4 phút) **quá dày**: mỗi cảnh ~60 giây, thầy chưa đọc kịp
+kết quả cảnh này đã sang cảnh khác. Làm nhanh hơn không giải quyết được, nên bỏ bớt cảnh và
+chuyển thao tác dài ra khỏi sân khấu.
 
-### Trước khi bấm giờ
+- **Bỏ D2 (sửa điểm hợp lệ)** — nói bằng một câu trước KB6. Step-up OTP đã có ở slide 5 và TC15.
+- **Bỏ `curl` cổng 3000 ở D1** — chỉ giữ `docker compose ps`.
+- **Copy cookie trước khi bấm giờ** — bước DevTools mất ~40 giây và là chỗ đã bị đứng lúc tập.
 
-Mọi thứ dưới đây phải xong **trước khi bắt đầu nói**, không tính vào 4 phút:
+| Cảnh | Nội dung | Thời gian |
+| --- | --- | --- |
+| 0 | `docker compose ps` | 0:00–0:15 |
+| 1 | **KB2** — cookie bị đánh cắp | 0:15–1:15 |
+| 2 | **KB6** — insider sửa thẳng DB | 1:15–2:35 |
+| 3 | Câu chốt | 2:35–2:50 |
+
+Còn dư ~1 phút so với 3–5 phút thầy cho. **Dùng phần dư để đi chậm**, không để nhồi thêm cảnh.
+
+### Trước khi bấm giờ (không tính giờ)
 
 - [ ] `docker compose up -d`, chờ ~20 giây, rồi **`node scripts/reset-demo.mjs`**
-      (mở khoá tài khoản · reset rate limit · đưa điểm `enrollment 1` về 8.50 qua app)
-- [ ] `gv01` **đã đăng nhập sẵn** ở cửa sổ thường, đang mở bảng điểm SEC401
-- [ ] `admin` đã đăng nhập sẵn ở tab riêng, đang mở tab **Cảnh báo**
-- [ ] Tab ẩn danh mở sẵn, trống
-- [ ] Terminal đã `cd` vào thư mục dự án
-- [ ] **Mở sẵn một file text chứa toàn bộ lệnh dưới đây** — demo thì dán, không gõ
-- [ ] Điện thoại mở sẵn app authenticator, hoặc `node scripts/otp.mjs gv01` chạy sẵn ở terminal thứ hai
+- [ ] Cửa sổ **ẩn danh** (Ctrl+Shift+N): `admin` đã đăng nhập, mở sẵn tab **Cảnh báo**
+- [ ] Cửa sổ **thường**: `gv01` đã đăng nhập, mở bảng SEC401
+- [ ] **Copy cookie gv01 vào biến `$c` ngay bây giờ** (F12 → Application → Cookies →
+      `sg_token` → Cookie Value → Ctrl+A, Ctrl+C, rồi `$c = "..."` trong PowerShell)
+- [ ] Từ lúc đăng nhập gv01 đến lúc chạy cảnh 1 **không quá 15 phút** (phiên hết hạn)
+- [ ] Terminal bên trái màn hình (`Win + ←`), cửa sổ admin bên phải (`Win + →`)
+- [ ] Chữ terminal phóng to (`Ctrl` + `+`) tới cỡ cuối phòng đọc được
+- [ ] `docs/LENH_DEMO.txt` mở sẵn để dán
+
+**`$c` chỉ dùng được một lần:** cảnh 1 thu hồi luôn phiên gv01. Tập lại thì phải đăng nhập
+gv01 và copy cookie lại.
+
+### Sáu nguyên tắc để thầy theo kịp
+
+1. `cls` trước mỗi lệnh — màn hình chỉ còn đúng kết quả đang nói.
+2. Chạy lệnh xong **dừng 3 giây**, chỉ tay vào dòng kết quả, rồi mới nói.
+3. Mỗi cảnh **một câu**, nói sau khi thao tác xong, không nói lúc đang gõ.
+4. Không `Alt+Tab` — hai cửa sổ đã xếp cạnh nhau.
+5. Chỉ vào **dòng trên cùng** của tab Cảnh báo và đọc giờ; bảng còn dòng của các lượt tập.
+6. Có sự cố thì nói "em chuyển sang video dự phòng", không sửa lỗi trước mặt thầy.
+
+### Cảnh 0 · 0:00–0:15 — Phân vùng
+
+```powershell
+cls
+docker compose ps
+```
+
+Chỉ vào cột PORTS: `waf` có `->`, `app` và `db` thì không.
+
+> *"Chỉ có một cửa vào là WAF, app và database không mở cổng ra ngoài."*
+
+### Cảnh 1 · 0:15–1:15 — KB2: cookie bị đánh cắp
+
+> *"Giả sử máy giảng viên nhiễm infostealer, malware đã lấy được cookie phiên đang đăng
+> nhập — em đã cất nó vào biến `$c`. Giờ em là kẻ tấn công, dùng cookie đó từ máy khác."*
+
+```powershell
+cls
+curl.exe -s http://localhost:8080/api/me -H "Cookie: sg_token=$c"
+```
+
+→ `{"error":"SESSION_CONTEXT_MISMATCH"}` — **dừng 3 giây**.
+
+1. Sang cửa sổ **gv01**, bấm chọn lại lớp → **bị đá ra trang đăng nhập**
+2. Cửa sổ **admin**, tab **Cảnh báo** (bấm lại tab) → dòng **CRITICAL** trên cùng
+
+> *"Cookie đúng, chữ ký đúng, nhưng dùng ở ngữ cảnh khác lúc đăng nhập nên bị từ chối. Phiên
+> gốc bị thu hồi luôn — chính giảng viên bị đá ra, đó là tín hiệu để báo sự cố."*
+
+### Cảnh 2 · 1:15–2:35 — KB6: insider sửa thẳng DB
+
+> *"Điểm 8.5 của sinh viên 01 đã được nhập qua app, có OTP, có dòng log. Giờ em là người có
+> quyền quản trị database, sửa thẳng không qua app."*
+
+1. Cửa sổ admin → tab **Kiểm tra toàn vẹn** → chỉ dòng *"Điểm lệch so với log: không có"*
+
+```powershell
+cls
+docker compose exec db psql -U postgres -d securegrade -c "UPDATE grades SET score = 10 WHERE enrollment_id = 1"
+```
+
+2. Bấm lại tab **Kiểm tra toàn vẹn** → `enrollment 1: DB=10 / log=8.5` — **dừng 3 giây**
+
+> *"Không có dòng log nào được ghi, nhưng hệ thống vẫn biết: điểm trong DB không khớp với
+> lần sửa hợp lệ cuối cùng."*
+
+```powershell
+cls
+docker compose exec db psql -U app_user -d securegrade -c "DELETE FROM audit_log WHERE id = 1"
+```
+
+→ `permission denied for table audit_log`
+
+> *"Còn tài khoản mà ứng dụng dùng thì không có quyền xoá log — kể cả khi app bị chiếm quyền
+> hoàn toàn, kẻ tấn công cũng không xoá được dấu vết."*
+
+### Cảnh 3 · 2:35–2:50 — Chốt
+
+> *"Hệ thống không tin cả database của chính nó. Bốn kịch bản tấn công còn lại nằm trong bộ
+> test tự động, 25 trên 25 PASS, em chạy được ngay nếu thầy muốn xem."*
+
+---
+
+## Phần 2b — Phương án dự phòng: bản 4 cảnh (~4 phút)
+
+Dùng khi thầy cho đủ 5 phút **và** muốn xem cả luồng sửa điểm hợp lệ. Đây là bản đã tập ngày
+29/10. Ở bản này `admin` cũng phải ở **cửa sổ ẩn danh**, không phải tab cùng cửa sổ.
 
 ### D1 · 0:00–0:25 — Phân vùng (Terminal)
 
@@ -153,7 +246,7 @@ Chi tiết từng lệnh: [`HUONG_DAN_DEMO.md`](HUONG_DAN_DEMO.md) mục B3, B5,
 ## Tổng duyệt
 
 Bấm giờ **riêng hai phần**. Phần nói quá 6:30 thì cắt tiếp slide 11 xuống 15 giây.
-Phần demo quá 4:30 thì bỏ bước 4 của D3 (tab cảnh báo CRITICAL) — ý đã nói ở bước 2.
+Demo chính quá 3:30 nghĩa là đang nói lúc gõ hoặc đang tìm cửa sổ — sửa thói quen, đừng cắt cảnh.
 
 **Giữa hai lượt duyệt phải chạy lại `node scripts/reset-demo.mjs`.** Bước D4 sửa thẳng
 điểm trong DB và kịch bản 4 phút đã bỏ bước khôi phục, nên kết thúc lượt 1 hệ thống đang
