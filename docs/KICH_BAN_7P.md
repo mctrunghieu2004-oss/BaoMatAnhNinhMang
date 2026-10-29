@@ -59,7 +59,7 @@ Mọi thứ dưới đây phải xong **trước khi bắt đầu nói**, không
 
 ```bash
 docker compose ps
-curl -i http://localhost:3000/health
+curl.exe -i http://localhost:3000/health
 ```
 
 Thấy: chỉ `waf` có cột PORTS · **connection refused**.
@@ -84,7 +84,7 @@ Mở tab admin → **Audit log** → chỉ vào dòng `GRADE_UPDATE` vừa sinh.
 2. Terminal:
 
 ```bash
-curl -i http://localhost:8080/api/me -H "Cookie: sg_token=<DAN_VAO_DAY>"
+curl.exe -i http://localhost:8080/api/me -H "Cookie: sg_token=<DAN_VAO_DAY>"
 ```
 
 → **401 `SESSION_CONTEXT_MISMATCH`**
@@ -137,6 +137,18 @@ Bỏ bước khôi phục điểm (bản gốc có) — không đủ thời gian
 Chi tiết từng lệnh: [`HUONG_DAN_DEMO.md`](HUONG_DAN_DEMO.md) mục B3, B5, B6.
 
 ---
+
+## Ba bẫy đã gặp ở lượt duyệt đầu
+
+1. **gv01 và admin phải ở hai cửa sổ khác nhau: thường và ẩn danh.** Hai tab cùng cửa sổ dùng
+   chung một cookie `sg_token`, đăng nhập người sau đè lên người trước, tab cũ sẽ ra nhầm
+   trang. Cookie của gv01 (để copy ở D3) phải lấy từ cửa sổ thường.
+2. **Trong PowerShell gõ `curl.exe`, không phải `curl`.** `curl` trần bị đổi thành
+   `Invoke-WebRequest`, nó hỏi `Uri:` và treo ở đó. Lệnh dán sẵn trong file text phải
+   ghi `curl.exe`.
+3. **OTP chỉ sống 30 giây và dùng một lần.** Đừng lấy mã trước khi con trỏ đã nằm trong ô
+   nhập. Bấm Lưu hai lần hoặc dán lại mã cũ là bị `STEP_UP_FAIL_REPLAY`. Mã hết hạn thì
+   phiên mật khẩu vẫn còn 5 phút, chỉ cần mã mới, không phải đăng nhập lại.
 
 ## Tổng duyệt
 
