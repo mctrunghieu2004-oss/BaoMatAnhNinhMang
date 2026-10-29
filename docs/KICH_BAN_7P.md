@@ -46,7 +46,8 @@ này với đồ án "làm web có đăng nhập".
 
 Mọi thứ dưới đây phải xong **trước khi bắt đầu nói**, không tính vào 4 phút:
 
-- [ ] `docker compose up -d` rồi `docker compose restart app` (reset rate limit)
+- [ ] `docker compose up -d`, chờ ~20 giây, rồi **`node scripts/reset-demo.mjs`**
+      (mở khoá tài khoản · reset rate limit · đưa điểm `enrollment 1` về 8.50 qua app)
 - [ ] `gv01` **đã đăng nhập sẵn** ở cửa sổ thường, đang mở bảng điểm SEC401
 - [ ] `admin` đã đăng nhập sẵn ở tab riêng, đang mở tab **Cảnh báo**
 - [ ] Tab ẩn danh mở sẵn, trống
@@ -67,8 +68,12 @@ Thấy: chỉ `waf` có cột PORTS · **connection refused**.
 
 ### D2 · 0:25–1:10 — Sửa điểm hợp lệ (Trình duyệt)
 
-`gv01` → **Sửa** ở `sv03` → `9.0` → lý do `Cham lai bai thi cuoi ky` → **OTP mới** → Lưu.
+`gv01` → **Sửa** ở `sv02` (enrollment 3, chưa có điểm) → `9.0` → lý do
+`Cham lai bai thi cuoi ky` → **OTP mới** → Lưu.
 Mở tab admin → **Audit log** → chỉ vào dòng `GRADE_UPDATE` vừa sinh.
+
+> Dùng `sv02` chứ không phải `sv03`: `sv03` đã có điểm 9.00 từ lần chạy trước, sửa một ô
+> đã có sẵn thì không thấy rõ là vừa nhập mới.
 
 > *Ô OTP này là step-up, không phải đăng nhập lại. Và điểm vừa đổi đã có một dòng log
 > ghi cùng transaction — không tồn tại trạng thái điểm đổi mà không có log.*
@@ -137,6 +142,13 @@ Chi tiết từng lệnh: [`HUONG_DAN_DEMO.md`](HUONG_DAN_DEMO.md) mục B3, B5,
 
 Bấm giờ **riêng hai phần**. Phần nói quá 6:30 thì cắt tiếp slide 11 xuống 15 giây.
 Phần demo quá 4:30 thì bỏ bước 4 của D3 (tab cảnh báo CRITICAL) — ý đã nói ở bước 2.
+
+**Giữa hai lượt duyệt phải chạy lại `node scripts/reset-demo.mjs`.** Bước D4 sửa thẳng
+điểm trong DB và kịch bản 4 phút đã bỏ bước khôi phục, nên kết thúc lượt 1 hệ thống đang
+ở trạng thái "vi phạm toàn vẹn". Vào lượt 2 mà không reset thì tab **Kiểm tra toàn ven**
+đã báo đỏ từ đầu, và màn KB6 mất sạch tính bất ngờ. Chạy reset mất ~15 giây.
+
+Cũng chạy nó **ngay trước khi vào phòng bảo vệ**, sau khi đã thử nghiệm xong mọi thứ.
 
 Quay OBS ở lần duyệt thứ hai. Nếu hôm đó Docker không lên hoặc phòng máy chặn cổng
 8080 thì phát video, vẫn kịp khung 5 phút.
