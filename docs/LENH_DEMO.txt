@@ -1,0 +1,137 @@
+=====================================================================
+ LENH DEMO SECUREGRADE — mo file nay ben canh terminal, DAN chu khong GO
+ Chay trong PowerShell, thu muc D:\BaoMatAnNinhMang
+ Giai thich tung buoc: docs\DEMO_GIAI_THICH.md
+=====================================================================
+
+---------------------------------------------------------------------
+ CHUAN BI (truoc khi bam gio)
+---------------------------------------------------------------------
+
+docker compose up -d
+
+node scripts/reset-demo.mjs
+
+# Lay ma OTP (luc that dung dien thoai; day la du phong)
+node scripts/otp.mjs gv01
+node scripts/otp.mjs admin
+node scripts/otp.mjs
+
+# Tai khoan
+#   Cua so THUONG   : gv01  / Gv01@2026demo   -> lop SEC401
+#   Cua so AN DANH  : admin / Admin@2026demo  -> tab Canh bao
+#   (Ctrl+Shift+N mo cua so an danh)
+
+
+---------------------------------------------------------------------
+ D1 — PHAN VUNG (0:00 - 0:25)
+---------------------------------------------------------------------
+
+docker compose ps
+
+curl.exe -i http://localhost:3000/health
+
+#   Mong doi: chi waf co "->" ; lenh 2 ra "Could not connect to server"
+
+
+---------------------------------------------------------------------
+ D2 — SUA DIEM HOP LE (0:25 - 1:10)   [thao tac tren trinh duyet]
+---------------------------------------------------------------------
+
+#   gv01 -> SEC401 -> Sua o sv02
+#   Diem   : 7.5   (khac diem hien tai)
+#   Ly do  : Cham lai bai thi cuoi ky
+#   OTP    : lay LUC con tro da nam trong o, bam Luu MOT lan
+#   admin -> tab Audit log -> dong GRADE_UPDATE
+
+
+---------------------------------------------------------------------
+ D3 — KB2 DANH CAP COOKIE (1:10 - 2:20)
+---------------------------------------------------------------------
+
+#   Cua so THUONG (gv01): F12 -> Application -> Cookies -> localhost:8080
+#   -> bam dong sg_token -> khung Cookie Value -> Ctrl+A, Ctrl+C
+
+# Lenh 1: dan cookie vao giua hai dau ngoac kep (chuot phai de dan)
+$c = ""
+
+# Lenh 2: co dinh, khong sua
+curl.exe -s http://localhost:8080/api/me -H "Cookie: sg_token=$c"
+
+#   Mong doi: {"error":"SESSION_CONTEXT_MISMATCH"}
+#   Kiem tra bien neu lenh 2 khong ra gi:  $c.Length   (khoang 280)
+#
+#   gv01 bam thao tac bat ky -> bi da ra trang dang nhap
+#   admin -> tab Canh bao -> dong CRITICAL tren cung
+
+
+---------------------------------------------------------------------
+ D4 — KB6 INSIDER SUA DB (2:20 - 3:45)
+---------------------------------------------------------------------
+
+#   admin -> tab Kiem tra toan ven -> phai SACH truoc
+
+docker compose exec db psql -U postgres -d securegrade -c "UPDATE grades SET score = 10 WHERE enrollment_id = 1"
+
+#   admin -> tab Kiem tra toan ven (bam lai) -> enrollment 1: DB=10 / log=8.5
+
+docker compose exec db psql -U app_user -d securegrade -c "DELETE FROM audit_log WHERE id = 1"
+
+#   Mong doi: ERROR: permission denied for table audit_log
+
+
+---------------------------------------------------------------------
+ SAU MOI LUOT — BAT BUOC
+---------------------------------------------------------------------
+
+node scripts/reset-demo.mjs
+
+
+---------------------------------------------------------------------
+ SU CO GIUA DEMO
+---------------------------------------------------------------------
+
+# 429 TOO_MANY_REQUESTS (qua 10 lan dang nhap / 15 phut)
+docker compose restart app
+
+# Trang trang / loi 500
+docker compose logs --tail 30 app
+docker compose up -d app
+
+# Tai khoan bi khoa nham: admin -> tab Nguoi dung -> Mo khoa
+#   hoac chay lai: node scripts/reset-demo.mjs
+
+
+=====================================================================
+ DU PHONG CHO HOI DAP — KHONG nam trong 4 phut demo
+ CHUA chay thu trong buoi tong duyet 29/10. Neu thay hoi moi dung.
+ Chi tiet: docs\HUONG_DAN_DEMO.md muc B3, B5, B6
+=====================================================================
+
+# KB1 — co mat khau, khong co dien thoai
+#   Tab an danh moi: dang nhap gv02 / Gv02@2026demo, nhap OTP 000000 ba lan
+#   Mong doi: lan 3 ra 423 ACCOUNT_LOCKED ; admin thay MFA_FAIL_THRESHOLD (HIGH)
+#   Xong nho mo khoa gv02 (tab Nguoi dung, hoac reset-demo.mjs)
+
+# KB3 — gia mao JWT (thay $c bang cookie gv01 con song)
+node tests/attacks/forge-jwt.mjs $c
+#   Lay hai token TAMPERED va ALG_NONE no in ra, goi lan luot:
+#   curl.exe -s http://localhost:8080/api/me -H "Cookie: sg_token=<TOKEN>"
+#   Mong doi: 401 INVALID_TOKEN
+
+# KB5 — SQLi qua WAF, roi bo qua WAF
+curl.exe -i -G http://localhost:8080/health --data-urlencode "id=1' OR '1'='1"
+#   Mong doi: 403 (WAF chan, rule 942100)
+docker compose cp tests/attacks/sqli-direct.mjs app:/tmp/sqli-direct.mjs
+docker compose exec app node /tmp/sqli-direct.mjs
+docker compose exec db psql -U postgres -d securegrade -tAc "SELECT count(*) FROM grades"
+#   Mong doi: van 401, so dong grades khong doi
+
+# KB4 — IDOR: gv01 sua diem lop cua gv02 (enrollment 2), kem OTP dung
+#   PowerShell 5.1 lam hong dau ngoac kep trong JSON -> chay lenh nay trong Git Bash.
+#   PHAI gui kem dung User-Agent cua trinh duyet (-A), neu khong lop fingerprint o D3
+#   chan truoc, ra SESSION_CONTEXT_MISMATCH thay vi 403, va gv01 bi da ra.
+#   Lay User-Agent: cua so gv01 -> F12 -> Console -> go  navigator.userAgent  -> copy
+#   Thay <UA>, <COOKIE_GV01>, <OTP_MOI>:
+#   curl -i -X PUT http://localhost:8080/api/grades/2 -A "<UA>" -H "Content-Type: application/json" -H "Cookie: sg_token=<COOKIE_GV01>" -H "X-OTP: <OTP_MOI>" -d '{"score":10,"reason":"Thu sua diem lop khac"}'
+#   Mong doi: 403 {"error":"FORBIDDEN"} ; Audit log ghi ACCESS_DENIED_IDOR (HIGH)

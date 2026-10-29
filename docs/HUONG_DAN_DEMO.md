@@ -162,8 +162,13 @@ Cả hai trả **401 INVALID_TOKEN**.
 
 KB4 — `gv01` sửa điểm lớp của `gv02` (enrollment 2 thuộc NET301), kèm OTP **đúng**:
 
+Chạy trong **Git Bash** (PowerShell 5.1 làm hỏng dấu ngoặc kép trong JSON). Phải gửi kèm đúng
+User-Agent của trình duyệt (`-A`), nếu không lớp fingerprint ở KB2 chặn trước, ra
+`SESSION_CONTEXT_MISMATCH` thay vì 403 và `gv01` bị đá ra. Lấy User-Agent: cửa sổ `gv01` →
+F12 → Console → gõ `navigator.userAgent`.
+
 ```bash
-curl -i -X PUT http://localhost:8080/api/grades/2 \
+curl -i -X PUT http://localhost:8080/api/grades/2 -A "<UA>" \
   -H "Content-Type: application/json" -H "Cookie: sg_token=<COOKIE_GV01>" \
   -H "X-OTP: <OTP_MOI>" -d '{"score":10,"reason":"Thu sua diem lop khac"}'
 ```
