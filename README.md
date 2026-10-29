@@ -189,7 +189,8 @@ Kịch bản demo đang chia vai TV1–TV4; nếu nhóm ít hơn 4 người thì
 
 **Sơ đồ**: `docs/diagrams/*.puml` là **bản đặc tả** để vẽ bằng draw.io, không phải ảnh
 đã render. Mỗi file ghi đủ thành phần, nhãn, quan hệ và có ghi chú bố cục ở đầu file;
-bảng màu chung ở `_style.puml`. Vẽ xong xuất PNG đúng tên file tương ứng
+bảng màu quy ước ghi ở đầu mỗi file. Các file **tự chứa, không dùng `!include`**, nên
+dán thẳng vào draw.io hay plantuml.com đều hiển được. Vẽ xong xuất PNG đúng tên file tương ứng
 (ví dụ `01-kien-truc-phan-vung.png`) vào cùng thư mục — báo cáo đã trỏ sẵn tới các tên này
 nên không phải sửa gì thêm.
 

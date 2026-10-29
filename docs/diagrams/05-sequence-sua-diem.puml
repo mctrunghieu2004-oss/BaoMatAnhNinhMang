@@ -2,7 +2,25 @@
 ' Sơ đồ 5: Sequence sửa điểm — 4 cổng kiểm chứng + audit cùng transaction
 ' Bố cục khi vẽ lại: 7 lifeline dọc. Chú ý vẽ rõ khối BEGIN...COMMIT bao quanh
 ' hai lệnh INSERT cuối — đó là ý chính của sơ đồ này.
-!include _style.puml
+' ---- Bảng màu quy ước (dùng lại đúng các mã này khi vẽ trong draw.io) ----
+'   #2E5C8A xanh đậm  — tiêu đề, viền khối chính
+'   #DCE6F1 xanh nhạt — nền khối hợp lệ
+'   #C0392B đỏ        — luồng bị chặn, tác nhân đe dọa
+'   #FADBD8 đỏ nhạt   — nền misuse case / nhánh từ chối
+'   #F4F6F8 xám nhạt  — nền zone
+'   #7F8C8D xám       — ghi chú
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam roundCorner 8
+skinparam ArrowColor #44546A
+skinparam ArrowFontSize 11
+skinparam TitleFontSize 16
+skinparam TitleFontColor #2E5C8A
+skinparam NoteBackgroundColor #FFF9E6
+skinparam NoteBorderColor #D4AC0D
+skinparam NoteFontSize 11
 title Sơ đồ 5 — Sửa điểm: 4 cổng kiểm chứng và audit trong cùng transaction
 
 skinparam sequence {

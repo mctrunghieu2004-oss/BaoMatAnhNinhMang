@@ -894,7 +894,8 @@ Xem [`docs/evidence/07-run-tests-output.txt`](evidence/07-run-tests-output.txt).
 Tám sơ đồ được **nhóm vẽ bằng draw.io**. Mỗi sơ đồ có một file đặc tả `.puml`
 trong `docs/diagrams/` ghi đầy đủ thành phần, nhãn và quan hệ — dùng làm bản thiết kế
 để vẽ, đồng thời là bản ghi dạng văn bản của sơ đồ để dễ soát và sửa về sau.
-Bảng màu quy ước dùng chung cho cả tám sơ đồ nằm ở `docs/diagrams/_style.puml`.
+Mỗi file tự chứa, không dùng `!include`, nên dán thẳng vào công cụ dựng sơ đồ là hiển
+được; bảng màu quy ước lặp ở đầu cả tám file dưới dạng ghi chú.
 
 | # | Sơ đồ | Loại | File đặc tả | Mục dùng |
 | --- | --- | --- | --- | --- |
