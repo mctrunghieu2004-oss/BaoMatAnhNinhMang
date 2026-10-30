@@ -79,7 +79,7 @@ thuộc lòng** — nắm ý chính in đậm, nói bằng giọng của mình.
 
 ---
 
-## Slide 6 — Không tin mặc định · 70 giây
+## Slide 6 — Không tin cậy mặc định · 70 giây
 
 > Đây là slide trả lời trực tiếp câu hỏi của bài. Mỗi thông tin hệ thống nhận được, nhóm đặt câu
 > hỏi: tin nó dựa vào đâu.

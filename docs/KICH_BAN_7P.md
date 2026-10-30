@@ -21,7 +21,7 @@ slide ở khung bên trái → **Hide Slide**. Slide vẫn nằm trong file, v�
 | 3 | Bài toán | 45 | Điểm là tài sản toàn vẹn → cổng vào duy nhất là tài khoản GV → **mật khẩu đúng có nghĩa là đúng người không?** |
 | ~~4~~ | ~~Tài sản~~ | — | **Ẩn.** Gộp một câu vào slide 3: *"tác nhân nguy hiểm nhất là insider có quyền DB — phần lớn đồ án bỏ qua"* |
 | 5 | Kiến trúc | 50 | 3 zone · chỉ WAF có port · **D4: app không gọi được ra Internet, nên có RCE cũng không exfiltrate được** |
-| 6 | Không tin mặc định | 70 | Đọc 5 dòng bảng. Dừng ở dòng cuối. Chèn một câu: *"cụ thể hoá thành 12 lớp kiểm chứng, một request sửa điểm phải qua hết"* |
+| 6 | Không tin cậy mặc định | 70 | Đọc 5 dòng bảng. Dừng ở dòng cuối. Chèn một câu: *"cụ thể hoá thành 12 lớp kiểm chứng, một request sửa điểm phải qua hết"* |
 | ~~7~~ | ~~Pipeline 12 lớp~~ | — | **Ẩn.** Đã nói bằng một câu ở slide 6 |
 | 8 | Top 5 rủi ro | 40 | Lướt 4 dòng đầu, **dừng ở R08** — insider, hash-chain, TC22–TC24 |
 | 9 | DEMO | 5 | "Chuyển sang màn hình live" |
