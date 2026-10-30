@@ -3,17 +3,17 @@
 Đây là **lời nói**, viết sẵn để đọc thành tiếng khi tập. Lúc trình bày thật thì **đừng đọc
 thuộc lòng** — nắm ý chính in đậm, nói bằng giọng của mình.
 
-- Thời lượng: **7 phút nói** (mục tiêu 5:55, dư ~1 phút) + **~3 phút demo**
-- Slide: `docs/SLIDE.pptx` — **ẩn slide 3 và 6** trước khi trình bày (chuột phải → Hide Slide)
+- Thời lượng: **7 phút nói** (mục tiêu 6:05, dư ~1 phút) + **~3 phút demo**
+- Slide: `docs/SLIDE.pptx` — **ẩn slide 4 và 7** trước khi trình bày (chuột phải → Hide Slide)
 - Demo: chi tiết thao tác ở [`KICH_BAN_7P.md`](KICH_BAN_7P.md), lệnh ở [`LENH_DEMO.txt`](LENH_DEMO.txt)
 - Nhóm nhiều người: chia theo cột **Người nói** gợi ý bên dưới; một người thì nói hết
 
 | Phần | Slide | Thời gian | Người nói gợi ý |
 | --- | --- | --- | --- |
-| Mở đầu, bài toán | 1, 2 | 1:00 | TV1 |
-| Thiết kế | 4, 5, 7 | 2:40 | TV2 |
-| Demo | 8 + màn hình | 0:05 + ~3:00 | TV3 thao tác, TV2 hoặc TV3 nói |
-| Kết quả, đánh giá | 9, 10, 11, 12 | 2:10 | TV4 |
+| Mở đầu, mục lục, bài toán | 1, 2, 3 | 1:10 | TV1 |
+| Thiết kế | 5, 6, 8 | 2:40 | TV2 |
+| Demo | 9 + màn hình | 0:05 + ~3:00 | TV3 thao tác, TV2 hoặc TV3 nói |
+| Kết quả, đánh giá | 10, 11, 12, 13 | 2:10 | TV4 |
 
 ---
 
@@ -28,7 +28,16 @@ thuộc lòng** — nắm ý chính in đậm, nói bằng giọng của mình.
 
 ---
 
-## Slide 2 — Bài toán · 45 giây
+## Slide 2 — Nội dung · 10 giây
+
+> Bài của nhóm em đi theo bảy phần: từ bài toán, qua thiết kế, rồi chứng minh bằng **demo
+> trực tiếp** và bộ test, cuối cùng là hạn chế và kết luận.
+
+*Đừng đọc từng dòng. Chỉ tay vào dòng 05 màu đỏ khi nói "demo trực tiếp".*
+
+---
+
+## Slide 3 — Bài toán · 45 giây
 
 > Điểm số quyết định học bổng, cảnh báo học vụ, xét tốt nghiệp — nên với bài toán này, **toàn
 > vẹn quan trọng hơn bảo mật hay sẵn sàng**. Một điểm bị sửa mà không ai phát hiện là thiệt hại
@@ -47,13 +56,13 @@ thuộc lòng** — nắm ý chính in đậm, nói bằng giọng của mình.
 
 ---
 
-## Slide 3 — ẨN
+## Slide 4 — ẨN
 
-*Chỉ mở nếu thầy hỏi "tài sản nào quan trọng nhất". Nội dung đã gộp một câu về insider vào slide 2.*
+*Chỉ mở nếu thầy hỏi "tài sản nào quan trọng nhất". Nội dung đã gộp một câu về insider vào slide 3.*
 
 ---
 
-## Slide 4 — Kiến trúc phân vùng · 50 giây
+## Slide 5 — Kiến trúc phân vùng · 50 giây
 
 > Hệ thống chia ba vùng mạng tách biệt bằng Docker: vùng Edge có WAF, vùng App, và vùng Data
 > chứa database.
@@ -70,7 +79,7 @@ thuộc lòng** — nắm ý chính in đậm, nói bằng giọng của mình.
 
 ---
 
-## Slide 5 — Không tin mặc định · 70 giây
+## Slide 6 — Không tin mặc định · 70 giây
 
 > Đây là slide trả lời trực tiếp câu hỏi của bài. Mỗi thông tin hệ thống nhận được, nhóm đặt câu
 > hỏi: tin nó dựa vào đâu.
@@ -95,13 +104,13 @@ thuộc lòng** — nắm ý chính in đậm, nói bằng giọng của mình.
 
 ---
 
-## Slide 6 — ẨN
+## Slide 7 — ẨN
 
-*Chỉ mở nếu thầy hỏi "12 lớp là những lớp nào". Đã nói bằng một câu ở slide 5.*
+*Chỉ mở nếu thầy hỏi "12 lớp là những lớp nào". Đã nói bằng một câu ở slide 6.*
 
 ---
 
-## Slide 7 — Top 5 rủi ro · 40 giây
+## Slide 8 — Top 5 rủi ro · 40 giây
 
 > Nhóm phân tích 12 rủi ro, đây là năm rủi ro chính. Mỗi rủi ro có ba thứ: cách **ngăn chặn**,
 > cách **phát hiện**, và **test case** chứng minh.
@@ -116,7 +125,7 @@ thuộc lòng** — nắm ý chính in đậm, nói bằng giọng của mình.
 
 ---
 
-## Slide 8 — DEMO · 5 giây
+## Slide 9 — DEMO · 5 giây
 
 > Em xin chuyển sang demo trực tiếp.
 
@@ -167,7 +176,7 @@ thuộc lòng** — nắm ý chính in đậm, nói bằng giọng của mình.
 
 ---
 
-## Slide 9 — Kết quả kiểm thử · 25 giây
+## Slide 10 — Kết quả kiểm thử · 25 giây
 
 > Bộ test tự động có **25 test case, 25 trên 25 PASS**: 6 test cho luồng bình thường và 19 test
 > tấn công, phủ đủ sáu kịch bản tấn công.
@@ -179,7 +188,7 @@ thuộc lòng** — nắm ý chính in đậm, nói bằng giọng của mình.
 
 ---
 
-## Slide 10 — Trade-off có số đo · 50 giây
+## Slide 11 — Trade-off có số đo · 50 giây
 
 > An toàn hơn luôn phải trả bằng tiện lợi. Nhóm không đoán mà **đo** cái giá đó.
 >
@@ -197,7 +206,7 @@ thuộc lòng** — nắm ý chính in đậm, nói bằng giọng của mình.
 
 ---
 
-## Slide 11 — Hạn chế và hướng phát triển · 25 giây
+## Slide 12 — Hạn chế và hướng phát triển · 25 giây
 
 > Nhóm cũng nêu rõ những gì chưa làm. Hai điểm quan trọng nhất:
 >
@@ -211,7 +220,7 @@ thuộc lòng** — nắm ý chính in đậm, nói bằng giọng của mình.
 
 ---
 
-## Slide 12 — Kết luận · 30 giây
+## Slide 13 — Kết luận · 30 giây
 
 > Nhóm rút ra bốn kết luận.
 >

@@ -106,7 +106,7 @@ node scripts/otp.mjs          # cả 6 tài khoản
    mã mới.
 
 **Vì sao script đọc được mã:** script đọc `mfa_secret` thẳng từ DB bằng quyền vận hành trên máy
-host (luồng F4 trong báo cáo). Nó cũng là hạn chế đã ghi ở slide 11: `mfa_secret` đang lưu
+host (luồng F4 trong báo cáo). Nó cũng là hạn chế đã ghi ở slide 12: `mfa_secret` đang lưu
 dạng rõ. Thầy hỏi thì trả lời đúng vậy, đừng nói là "cửa hậu".
 
 ### A5. Chuẩn bị khác
@@ -409,7 +409,7 @@ không phụ thuộc vào code app có đúng hay không.
 ### Hạn chế — nói thẳng nếu thầy hỏi
 
 Superuser `postgres` về lý thuyết **tính lại được toàn bộ chuỗi hash** sau khi sửa log, để chuỗi
-trông như chưa từng bị đụng. Hướng xử lý (slide 11): gửi log ra hệ thống ngoài như SIEM, lưu
+trông như chưa từng bị đụng. Hướng xử lý (slide 12): gửi log ra hệ thống ngoài như SIEM, lưu
 trên WORM storage (ghi một lần, không sửa được), tạm thời thì xuất `lastHash` (hash cuối) ra
 ngoài làm mốc — tab Kiểm tra toàn vẹn hiện sẵn giá trị này ở dòng **Hash cuối (anchor)**.
 

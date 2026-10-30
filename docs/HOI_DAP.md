@@ -26,7 +26,7 @@ giảng viên bị phishing hoặc nhiễm malware. Đủ cụ thể để làm 
 *(Báo cáo 2.1)*
 
 ### ⭐ A3. Đề bài nói "không phải mọi thông tin đều đáng tin" — đồ án thể hiện thế nào?
-Bảng ở slide 5 / báo cáo 4.7: liệt kê từng thông tin hệ thống nhận — mật khẩu, token, vai trò,
+Bảng ở slide 6 / báo cáo 4.7: liệt kê từng thông tin hệ thống nhận — mật khẩu, token, vai trò,
 cookie, mã sinh viên, OTP, và cả dữ liệu trong DB — kèm cách kiểm chứng từng cái. Điểm khác biệt
 là dòng cuối: **không tin cả database của chính mình**.
 

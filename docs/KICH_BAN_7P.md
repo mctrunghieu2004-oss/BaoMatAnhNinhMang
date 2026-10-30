@@ -8,32 +8,33 @@ thay**. Thứ bị bỏ không mất — nó nằm ở slide ẩn và ở mục 
 
 ---
 
-## Phần 1 — Nói (mục tiêu 5:55, dư 65 giây)
+## Phần 1 — Nói (mục tiêu 6:05, dư 55 giây)
 
-Ẩn **slide 3** và **slide 6** trước khi trình bày: trong PowerPoint, chuột phải vào
+Ẩn **slide 4** và **slide 7** trước khi trình bày: trong PowerPoint, chuột phải vào
 slide ở khung bên trái → **Hide Slide**. Slide vẫn nằm trong file, vẫn mở được khi hỏi
 đáp, chỉ không chạy trong lượt trình chiếu.
 
 | # | Slide | Giây | Chỉ nói đúng một ý này |
 | --- | --- | --- | --- |
 | 1 | Trang bìa | 15 | Tên đề tài + "câu hỏi của đồ án là: hệ thống dựa vào đâu để tin một thông tin" |
-| 2 | Bài toán | 45 | Điểm là tài sản toàn vẹn → cổng vào duy nhất là tài khoản GV → **mật khẩu đúng có nghĩa là đúng người không?** |
-| ~~3~~ | ~~Tài sản~~ | — | **Ẩn.** Gộp một câu vào slide 2: *"tác nhân nguy hiểm nhất là insider có quyền DB — phần lớn đồ án bỏ qua"* |
-| 4 | Kiến trúc | 50 | 3 zone · chỉ WAF có port · **D4: app không gọi được ra Internet, nên có RCE cũng không exfiltrate được** |
-| 5 | Không tin mặc định | 70 | Đọc 5 dòng bảng. Dừng ở dòng cuối. Chèn một câu: *"cụ thể hoá thành 12 lớp kiểm chứng, một request sửa điểm phải qua hết"* |
-| ~~6~~ | ~~Pipeline 12 lớp~~ | — | **Ẩn.** Đã nói bằng một câu ở slide 5 |
-| 7 | Top 5 rủi ro | 40 | Lướt 4 dòng đầu, **dừng ở R08** — insider, hash-chain, TC22–TC24 |
-| 8 | DEMO | 5 | "Chuyển sang màn hình live" |
+| 2 | Nội dung (mục lục) | 10 | Một câu cho cả bài: bài toán → thiết kế → demo và test → hạn chế, kết luận. **Đừng đọc từng dòng** |
+| 3 | Bài toán | 45 | Điểm là tài sản toàn vẹn → cổng vào duy nhất là tài khoản GV → **mật khẩu đúng có nghĩa là đúng người không?** |
+| ~~4~~ | ~~Tài sản~~ | — | **Ẩn.** Gộp một câu vào slide 3: *"tác nhân nguy hiểm nhất là insider có quyền DB — phần lớn đồ án bỏ qua"* |
+| 5 | Kiến trúc | 50 | 3 zone · chỉ WAF có port · **D4: app không gọi được ra Internet, nên có RCE cũng không exfiltrate được** |
+| 6 | Không tin mặc định | 70 | Đọc 5 dòng bảng. Dừng ở dòng cuối. Chèn một câu: *"cụ thể hoá thành 12 lớp kiểm chứng, một request sửa điểm phải qua hết"* |
+| ~~7~~ | ~~Pipeline 12 lớp~~ | — | **Ẩn.** Đã nói bằng một câu ở slide 6 |
+| 8 | Top 5 rủi ro | 40 | Lướt 4 dòng đầu, **dừng ở R08** — insider, hash-chain, TC22–TC24 |
+| 9 | DEMO | 5 | "Chuyển sang màn hình live" |
 | — | *(demo ~3 phút)* | — | *tính vào ngân sách demo, không tính vào 7 phút* |
-| 9 | Kết quả | 25 | 25/25 · 6 bình thường + 19 tấn công · phủ KB1–KB6 |
-| 10 | Trade-off | 50 | **Slide ghi điểm.** Ba con số: 1 sửa/30 giây · PL1 0/15 chặn oan · RTO 5–6 giây |
-| 11 | Hạn chế | 25 | Đọc nhanh 2 dòng: TOTP không chống AiTM → Passkey; superuser DB vẫn tính lại được hash-chain |
-| 12 | Kết luận | 30 | Bốn câu, dừng sau câu 3 |
+| 10 | Kết quả | 25 | 25/25 · 6 bình thường + 19 tấn công · phủ KB1–KB6 |
+| 11 | Trade-off | 50 | **Slide ghi điểm.** Ba con số: 1 sửa/30 giây · PL1 0/15 chặn oan · RTO 5–6 giây |
+| 12 | Hạn chế | 25 | Đọc nhanh 2 dòng: TOTP không chống AiTM → Passkey; superuser DB vẫn tính lại được hash-chain |
+| 13 | Kết luận | 30 | Bốn câu, dừng sau câu 3 |
 
 **Đừng đọc slide.** Chữ trên slide để thầy đọc, bạn nói phần không có trên slide.
 
-Ba chỗ dễ vỡ ngân sách nhất: slide 5 (dễ sa đà giải thích từng dòng), slide 10 (dễ kể
-quá trình đo), slide 11 (dễ xin lỗi dài dòng). Ba slide này bấm giờ riêng khi tổng duyệt.
+Ba chỗ dễ vỡ ngân sách nhất: slide 6 (dễ sa đà giải thích từng dòng), slide 11 (dễ kể
+quá trình đo), slide 12 (dễ xin lỗi dài dòng). Ba slide này bấm giờ riêng khi tổng duyệt.
 
 ---
 
@@ -43,7 +44,7 @@ Bản 4 cảnh (lượt tập 29/10 mất ~4 phút) **quá dày**: mỗi cảnh 
 kết quả cảnh này đã sang cảnh khác. Làm nhanh hơn không giải quyết được, nên bỏ bớt cảnh và
 chuyển thao tác dài ra khỏi sân khấu.
 
-- **Bỏ D2 (sửa điểm hợp lệ)** — nói bằng một câu trước KB6. Step-up OTP đã có ở slide 5 và TC15.
+- **Bỏ D2 (sửa điểm hợp lệ)** — nói bằng một câu trước KB6. Step-up OTP đã có ở slide 6 và TC15.
 - **Bỏ `curl` cổng 3000 ở D1** — chỉ giữ `docker compose ps`.
 - **Copy cookie trước khi bấm giờ** — bước DevTools mất ~40 giây và là chỗ đã bị đứng lúc tập.
 
@@ -219,8 +220,8 @@ Bỏ bước khôi phục điểm (bản gốc có) — không đủ thời gian
 
 | Thầy hỏi | Mở cái gì |
 | --- | --- |
-| "Tài sản nào quan trọng nhất?" | Bỏ ẩn **slide 3** |
-| "12 lớp là những lớp nào?" | Bỏ ẩn **slide 6** |
+| "Tài sản nào quan trọng nhất?" | Bỏ ẩn **slide 4** |
+| "12 lớp là những lớp nào?" | Bỏ ẩn **slide 7** |
 | "Có mật khẩu rồi thì sao?" | **KB1** — tab ẩn danh, `gv02`, nhập OTP sai 3 lần → 423 + cảnh báo HIGH (~60s) |
 | "Sửa JWT được không?" | **KB3** — `node tests/attacks/forge-jwt.mjs <cookie>` (~40s) |
 | "Đổi ID trên URL thì sao?" | **KB4** — `PUT /api/grades/2` bằng cookie `gv01` → 403, audit ghi `ACCESS_DENIED_IDOR` (~40s) |
@@ -245,7 +246,7 @@ Chi tiết từng lệnh: [`HUONG_DAN_DEMO.md`](HUONG_DAN_DEMO.md) mục B3, B5,
 
 ## Tổng duyệt
 
-Bấm giờ **riêng hai phần**. Phần nói quá 6:30 thì cắt tiếp slide 11 xuống 15 giây.
+Bấm giờ **riêng hai phần**. Phần nói quá 6:30 thì cắt tiếp slide 12 xuống 15 giây.
 Demo chính quá 3:30 nghĩa là đang nói lúc gõ hoặc đang tìm cửa sổ — sửa thói quen, đừng cắt cảnh.
 
 **Giữa hai lượt duyệt phải chạy lại `node scripts/reset-demo.mjs`.** Bước D4 sửa thẳng

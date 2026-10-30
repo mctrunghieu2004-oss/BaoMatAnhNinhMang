@@ -174,7 +174,7 @@ docs/                     BAO_CAO.md · SLIDE.md · diagrams/ · evidence/
 ## 7. Việc còn lại
 
 Code, test, 11 file bằng chứng và 10 ảnh giao diện đã xong. **8 sơ đồ đã vẽ tay bằng
-draw.io** và nhúng vào `docs/BAO_CAO.docx`. **Bộ slide đã dựng trên Canva**, 12 trang nền
+draw.io** và nhúng vào `docs/BAO_CAO.docx`. **Bộ slide đã dựng trên Canva**, 13 trang nền
 sáng, có ghi chú người nói theo khung 7 phút, xuất sẵn ra `docs/SLIDE.pptx`.
 
 Còn **bốn việc**, cả bốn đều cần có mặt bạn:
@@ -184,7 +184,7 @@ Còn **bốn việc**, cả bốn đều cần có mặt bạn:
    `docs/SLIDE.pptx`.
 2. **Xuất bản nộp** (~10 phút) — chạy lại phần xuất docx (xem mục dưới), mở bằng Word rồi
    **File → Export → Create PDF**. Hiện chưa có `docs/BAO_CAO.pdf`.
-3. **Ẩn slide 3 và 6** (~1 phút) — mở `docs/SLIDE.pptx`, chuột phải vào slide ở khung bên
+3. **Ẩn slide 4 và 7** (~1 phút) — mở `docs/SLIDE.pptx`, chuột phải vào slide ở khung bên
    trái → **Hide Slide**. Hai slide này là dự phòng cho hỏi đáp, không chạy trong lượt
    trình chiếu 7 phút. Ghi chú của chính hai slide đó cũng nhắc việc này.
 4. **Tổng duyệt demo 2 lần** (~40 phút) — theo [`docs/KICH_BAN_7P.md`](docs/KICH_BAN_7P.md),
@@ -230,4 +230,4 @@ slide vì đó là kịch bản tổng duyệt — xem ở cuối `docs/SLIDE.md
 - [ ] 8 sơ đồ PNG + file nguồn `.puml`
 - [ ] Source code (không chứa `.env`, `node_modules`, `backups/`)
 - [ ] Bộ test case + kết quả 25/25 + thư mục `docs/evidence/`
-- [ ] Slide 12 trang + video demo dự phòng
+- [ ] Slide 13 trang + video demo dự phòng

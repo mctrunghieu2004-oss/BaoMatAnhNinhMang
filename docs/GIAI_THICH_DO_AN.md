@@ -70,7 +70,7 @@ lấy mất qua email giả. Người cầm mật khẩu chưa chắc là giản
 
 ## 4. Trọng tâm: hệ thống dựa vào đâu để tin một thông tin
 
-Đây là bảng quan trọng nhất của đồ án (slide 5, báo cáo mục 4.7). Học thuộc ý của bảng này.
+Đây là bảng quan trọng nhất của đồ án (slide 6, báo cáo mục 4.7). Học thuộc ý của bảng này.
 
 | Thông tin hệ thống nhận | Vì sao không tin ngay | Kiểm chứng bằng |
 | --- | --- | --- |
@@ -265,7 +265,7 @@ Mở `http://localhost:8080`. Tài khoản: `gv01` / `Gv01@2026demo`, `admin` / 
 | 25 test case | ✅ 25/25 PASS |
 | 8 sơ đồ | ✅ vẽ tay bằng draw.io |
 | Báo cáo | ✅ nội dung xong; ⏳ điền thông tin nhóm + xuất PDF (hạn 2 tuần) |
-| Slide | ✅ 12 trang; ⏳ điền tên nhóm ở trang bìa, ẩn slide 3 và 6 |
+| Slide | ✅ 13 trang; ⏳ điền tên nhóm ở trang bìa, ẩn slide 4 và 7 |
 | Demo | ✅ đã tập 1 lượt (4 cảnh, ~4 phút); ⏳ tập bản 3 phút, quay OBS dự phòng |
 
 **Việc cần cả nhóm:**
